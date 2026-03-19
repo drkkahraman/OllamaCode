@@ -64,10 +64,13 @@ class OllamaCodeAgent:
         except: pass
 
     def get_system_stats(self):
-        cpu = psutil.cpu_percent()
-        ram = psutil.virtual_memory().percent
-        disk = psutil.disk_usage('/').percent
-        return cpu, ram, disk
+        try:
+            cpu = psutil.cpu_percent()
+            ram = psutil.virtual_memory().percent
+            disk = psutil.disk_usage('/').percent
+            return cpu, ram, disk
+        except:
+            return None, None, None
 
     def get_system_context(self):
         os_info = f"{platform.system()} {platform.release()}"
@@ -194,7 +197,8 @@ class OllamaCodeAgent:
             self.setup(force=force_setup)
             while True:
                 cpu, ram, disk = self.get_system_stats()
-                rprint(f"[dim]Stats: CPU %{cpu} | RAM %{ram} | {self.cwd}[/dim]")
+                stats_line = f"[dim]Stats: CPU %{cpu} | RAM %{ram} | {self.cwd}[/dim]" if cpu is not None else f"[dim]{self.cwd}[/dim]"
+                rprint(stats_line)
                 user_input = Prompt.ask("[bold green]OllamaCode >[/bold green]")
                 if user_input.lower() in ['q', 'exit', 'quit']: break
                 if user_input.lower() in ["update", "/update"]:
