@@ -1,8 +1,8 @@
-# OllamaCode 1.1.2
+# OllamaCoder 1.1.2
 
-A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
+A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks. This project supports both **Node.js (NPM)** and **Python**.
 
-## Quick Start
+## Node.js Installation (NPM)
 
 1. **Clone the repository**:
    ```bash
@@ -15,40 +15,40 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
    npm install -g .
    ```
 
-3. **Run OllamaCode**:
-
-![Kooha-2026-03-19-14-48-08](https://github.com/user-attachments/assets/214678ac-4eb0-4ebf-8a24-0f00d266763c)
-
+3. **Run OllamaCoder**:
    ```bash
-   ollamacode
-   ```
-   
-4. **Update OllamaCode**:
-   ```bash
-   ollamacode update
+   ollamacoder
    ```
 
-5. **Settings & Configuration**:
+---
 
-![Kooha-2026-03-19-14-46-01](https://github.com/user-attachments/assets/24dfe48e-7a20-4312-a890-cc11cdc5cf51)
+## Python Installation
 
+1. **Install via pip**:
    ```bash
-   ollamacode settings
+   pip install -e .
    ```
+
+2. **Run Python version**:
+   ```bash
+   python3 -m ollamacode
+   ```
+
+---
 
 ## Configuration
 
-OllamaCode will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
+OllamaCoder will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
 
 ## Error Correction (Auto-Fix)
 
-When enabled, OllamaCode automatically analyzes terminal errors and suggest corrections. It uses the feedback from the command output to iteratively find the right solution.
+When enabled, OllamaCoder automatically analyzes terminal errors and suggest corrections. It uses the feedback from the command output to iteratively find the right solution.
 
 ## Loop Detection
 
 To ensure safety in autonomous modes, the agent detects if it is repeating the same command with the same outcome and will automatically halt the process to prevent infinite loops.
 
-## Dependencies
+## Dependencies (NPM)
 
 - axios
 - systeminformation
@@ -59,3 +59,9 @@ To ensure safety in autonomous modes, the agent detects if it is repeating the s
 - ora
 - marked
 - marked-terminal
+
+## Dependencies (Python)
+
+- requests
+- psutil
+- rich

@@ -1,9 +1,10 @@
 {
-  "name": "ollamacode",
+  "name": "ollamacoder",
   "version": "1.1.2",
-  "description": "OllamaCode: AI-Powered Autonomous Terminal Agent",
+  "description": "OllamaCoder: AI-Powered Autonomous Terminal Agent (Python & NPM)",
   "main": "index.js",
   "bin": {
+    "ollamacoder": "./bin/cli.js",
     "ollamacode": "./bin/cli.js"
   },
   "type": "module",
@@ -17,7 +18,8 @@
     "agent",
     "terminal",
     "coding",
-    "assistant"
+    "assistant",
+    "ollamacoder"
   ],
   "author": "drkkahraman",
   "license": "MIT",
