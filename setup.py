@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ollamacode",
-    version="1.0.3",
+    version="1.0.4",
     author="Doruk",
     description="High-performance AI Terminal Agent powered by Groq and Ollama",
     long_description=open("README.md").read() if os.path.exists("README.md") else "",
