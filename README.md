@@ -46,8 +46,35 @@ When enabled, OllamaCode automatically analyzes terminal errors and suggest corr
 
 To ensure safety in autonomous modes, the agent detects if it is repeating the same command with the same outcome and will automatically halt the process to prevent infinite loops.
 
+## Plugins
+
+OllamaCode supports custom plugins to extend its functionality.
+
+### Adding a Plugin
+Python plugins (.py):
+```bash
+ollamacode add plugin /path/to/plugin.py
+```
+
+Node.js plugins (.js):
+```bash
+ollamacode add plugin /path/to/plugin.js
+```
+
+### Listing Plugins
+```bash
+ollamacode plugins
+```
+
 ## Dependencies
 
 - requests
 - psutil
 - rich
+- commander (JS)
+- inquirer (JS)
+- chalk (JS)
+- boxen (JS)
+- ora (JS)
+- marked (JS)
+- marked-terminal (JS)
