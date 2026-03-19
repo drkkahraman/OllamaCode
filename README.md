@@ -1,4 +1,4 @@
-# OllamaCoder 1.2.3
+# OllamaCode 1.2.3
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks. This project supports both **Node.js (NPM)** and **Python**.
 
@@ -6,12 +6,12 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 1. **Install the package globally**:
    ```bash
-   npm install -g ollamacoder
+   npm install -g ollamacode
    ```
 
-2. **Run OllamaCoder**:
+2. **Run OllamaCode**:
    ```bash
-   ollamacoder
+   ollamacode
    ```
 
 ---
@@ -20,25 +20,25 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 1. **Install via pip**:
    ```bash
-   git clone https://github.com/drkkahraman/OllamaCoder.git
-   cd OllamaCoder
+   git clone https://github.com/drkkahraman/OllamaCode.git
+   cd OllamaCode
    pip install -e .
    ```
 
 2. **Run Python version**:
    ```bash
-   python3 -m ollamacode
+   ollamacode
    ```
 
 ---
 
 ## Configuration
 
-OllamaCoder will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
+OllamaCode will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
 
 ## Error Correction (Auto-Fix)
 
-When enabled, OllamaCoder automatically analyzes terminal errors and suggest corrections. It uses the feedback from the command output to iteratively find the right solution.
+When enabled, OllamaCode automatically analyzes terminal errors and suggest corrections. It uses the feedback from the command output to iteratively find the right solution.
 
 ## Loop Detection
 

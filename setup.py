@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="ollamacoder",
+    name="ollamacode",
     version="1.2.3",
     packages=find_packages(),
     install_requires=[
@@ -11,14 +11,14 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            "ollamacoder_py=ollamacode.main:main",
+            "ollamacode=ollamacode.main:main",
         ],
     },
     author="drkkahraman",
-    description="OllamaCoder: AI-Powered Autonomous Terminal Agent (Python Edition)",
+    description="OllamaCode: AI-Powered Autonomous Terminal Agent (Python Edition)",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/drkkahraman/OllamaCoder",
+    url="https://github.com/drkkahraman/OllamaCode",
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",

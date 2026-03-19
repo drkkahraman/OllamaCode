@@ -1,10 +1,9 @@
 {
-  "name": "ollamacoder",
+  "name": "ollamacode",
   "version": "1.2.3",
-  "description": "OllamaCoder: AI-Powered Autonomous Terminal Agent (Python & NPM)",
+  "description": "OllamaCode: AI-Powered Autonomous Terminal Agent (Python & NPM)",
   "main": "index.js",
   "bin": {
-    "ollamacoder": "./bin/cli.js",
     "ollamacode": "./bin/cli.js"
   },
   "type": "module",
@@ -19,18 +18,18 @@
     "terminal",
     "coding",
     "assistant",
-    "ollamacoder"
+    "ollamacode"
   ],
   "author": "drkkahraman",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/drkkahraman/OllamaCoder.git"
+    "url": "git+https://github.com/drkkahraman/OllamaCode.git"
   },
   "bugs": {
-    "url": "https://github.com/drkkahraman/OllamaCoder/issues"
+    "url": "https://github.com/drkkahraman/OllamaCode/issues"
   },
-  "homepage": "https://github.com/drkkahraman/OllamaCoder#readme",
+  "homepage": "https://github.com/drkkahraman/OllamaCode#readme",
   "dependencies": {
     "axios": "^1.6.0",
     "boxen": "^7.1.1",

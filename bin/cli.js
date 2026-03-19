@@ -37,7 +37,7 @@ async function runAgent(forceSetup = false) {
             const { user_input } = await inquirer.prompt([{
                 type: 'input',
                 name: 'user_input',
-                message: chalk.bold.green('OllamaCoder >')
+                message: chalk.bold.green('OllamaCode >')
             }]);
 
             if (['q', 'exit', 'quit'].includes(user_input.toLowerCase())) break;
@@ -55,7 +55,7 @@ async function runAgent(forceSetup = false) {
                 const answer = await agent.askAi(cwd);
                 spinner.stop();
 
-                console.log(boxen(marked(answer), { title: '🤖 OllamaCoder', borderColor: 'cyan', padding: 1 }));
+                console.log(boxen(marked(answer), { title: '🤖 OllamaCode', borderColor: 'cyan', padding: 1 }));
                 agent.history.push({ role: "assistant", content: answer });
 
                 const cmds = agent.getCommands(answer);
@@ -107,7 +107,7 @@ async function runAgent(forceSetup = false) {
 }
 
 program
-    .name('ollamacoder')
+    .name('ollamacode')
     .description('AI-Powered Autonomous Terminal Agent')
     .version('1.2.3');
 
