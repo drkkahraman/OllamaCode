@@ -12,6 +12,8 @@ from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+from rich.live import Live
+from rich.layout import Layout
 from rich import print as rprint
 from rich.markdown import Markdown
 from rich.progress import Progress, SpinnerColumn, TextColumn
@@ -19,9 +21,9 @@ from rich.prompt import Prompt, Confirm
 
 load_dotenv()
 
-CONFIG_FILE = os.path.join(os.path.dirname(__file__), "ollamacode_settings.json")
+CONFIG_FILE = os.path.join(os.path.expanduser("~"), ".ollamacode_settings.json")
 
-class OllamaCode:
+class OllamaCodeAgent:
     def __init__(self):
         self.console = Console()
         self.provider = "Groq"
@@ -30,8 +32,8 @@ class OllamaCode:
         self.history = []
         self.ollama_url = "http://localhost:11434"
         self.groq_url = "https://api.groq.com/openai/v1/chat/completions"
-        self.cwd = os.getcwd()
         self.load_settings()
+        self.cwd = os.getcwd()
 
     def load_settings(self):
         if os.path.exists(CONFIG_FILE):
@@ -61,161 +63,291 @@ class OllamaCode:
         disk = psutil.disk_usage('/').percent
         return cpu, ram, disk
 
-    def get_detailed_system_info(self):
-        try:
-            mem = psutil.virtual_memory()
-            disk = psutil.disk_usage('/')
-            cpu_freq = psutil.cpu_freq()
-            
-            info = [
-                f"OS: {platform.system()} {platform.release()} ({platform.machine()})",
-                f"CPU: {platform.processor()} ({psutil.cpu_count(logical=True)} cores)",
-                f"Memory: {round(mem.total / (1024**3), 1)}GB Total ({round(mem.available / (1024**3), 1)}GB Free)",
-                f"Disk: {round(disk.total / (1024**3), 1)}GB Total ({round(disk.free / (1024**3), 1)}GB Free)"
-            ]
-            return " | ".join(info)
-        except:
-            return "System info unavailable"
+    def get_system_context(self):
+        os_info = f"{platform.system()} {platform.release()}"
+        return f"Operating System: {os_info}\nCurrent Directory: {self.cwd}"
 
     def list_ollama_models(self):
         try:
             response = requests.get(f"{self.ollama_url}/api/tags", timeout=5)
             if response.status_code == 200:
-                return [m['name'] for m in response.json().get('models', [])]
+                models_data = response.json().get('models', [])
+                refined_models = []
+                for m in models_data:
+                    details = m.get('details', {})
+                    refined_models.append({
+                        "id": m['name'],
+                        "family": details.get('family', 'N/A'),
+                        "params": details.get('parameter_size', 'N/A'),
+                        "size": f"{round(m.get('size', 0) / (1024**3), 2)} GB"
+                    })
+                return refined_models
         except:
             return []
         return []
 
     def list_groq_models(self):
-        if not self.api_key: return ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+        if not self.api_key: return [
+            {"id": "llama-3.3-70b-versatile", "family": "Llama 3.3", "params": "70B"},
+            {"id": "llama-3.1-8b-instant", "family": "Llama 3.1", "params": "8B"}
+        ]
         try:
             url = "https://api.groq.com/openai/v1/models"
             response = requests.get(url, headers={"Authorization": f"Bearer {self.api_key}"}, timeout=5)
             if response.status_code == 200:
-                return [m['id'] for m in response.json().get('data', []) if any(x in m['id'].lower() for x in ['llama', 'qwen', 'mixtral'])]
+                data = response.json().get('data', [])
+                refined_models = []
+                for m in data:
+                    model_id = m['id']
+                    if any(x in model_id.lower() for x in ['llama', 'qwen', 'mixtral', 'gemma']):
+                        family = "Llama" if "llama" in model_id.lower() else \
+                                 "Qwen" if "qwen" in model_id.lower() else \
+                                 "Mixtral" if "mixtral" in model_id.lower() else \
+                                 "Gemma" if "gemma" in model_id.lower() else "N/A"
+                        refined_models.append({
+                            "id": model_id,
+                            "family": family,
+                            "params": "Cloud"
+                        })
+                return refined_models
         except:
             pass
-        return ["llama-3.3-70b-versatile", "llama-3.1-8b-instant"]
+        return [
+            {"id": "llama-3.3-70b-versatile", "family": "Llama 3.3", "params": "70B"},
+            {"id": "llama-3.1-8b-instant", "family": "Llama 3.1", "params": "8B"}
+        ]
 
     def setup(self):
         if os.path.exists(CONFIG_FILE):
-            self.console.print(Panel(f"[bold green]Saved Configuration Found:[/bold green]\nProvider: [cyan]{self.provider}[/cyan]\nModel: [yellow]{self.model}[/yellow]", border_style="blue"))
-            if not Confirm.ask("Do you want to change these settings?", default=False):
+            status_panel = Panel(
+                f"Provider: [cyan]{self.provider}[/cyan]\n"
+                f"Model:    [yellow]{self.model}[/yellow]",
+                title="[bold green]✨ Saved Settings Loaded[/bold green]",
+                border_style="green",
+                expand=False
+            )
+            self.console.print(status_panel)
+            if not Confirm.ask("\n[bold yellow]Would you like to change settings?[/bold yellow]", default=False):
+                self.console.clear()
+                self.console.print(status_panel)
                 return
 
-        self.console.clear()
-        self.console.print(Panel("[bold cyan]OLLAMACODE v3.0[/bold cyan]\n[dim]High-Performance AI Terminal Assistant[/dim]", style="bold white on blue", expand=False))
-        
-        provider_table = Table(show_header=True, header_style="bold magenta", border_style="blue")
-        provider_table.add_column("ID", justify="center", style="bold cyan")
-        provider_table.add_column("Provider", style="bold green")
-        provider_table.add_column("Description", style="white")
-        provider_table.add_row("1", "Groq Cloud", "Super-fast Llama/Qwen models (API Key required)")
-        provider_table.add_row("2", "Ollama Local", "Privacy-focused, runs on your own hardware")
-        
-        self.console.print(provider_table)
-        choice = Prompt.ask("Select your choice", choices=["1", "2"], default="1" if self.provider == "Groq" else "2")
-        self.provider = "Groq" if choice == "1" else "Ollama"
-        
-        if self.provider == "Groq":
-            if not self.api_key or "gsk_" not in self.api_key:
-                self.api_key = Prompt.ask("Enter Groq API Key (gsk_...)")
-            else:
-                masked = f"{self.api_key[:8]}...{self.api_key[-4:]}"
-                if not Confirm.ask(f"Use existing API key ({masked})?", default=True):
-                    self.api_key = Prompt.ask("Enter new Groq API Key")
+        step = 1
+        while step <= 3:
+            self.console.clear()
+            self.console.print(Panel(
+                "[bold cyan]OLLAMACODE AGENT v3.1[/bold cyan]\n[dim]High-Performance Setup Wizard[/dim]", 
+                style="white", 
+                border_style="cyan",
+                expand=False
+            ))
 
-        with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
-            progress.add_task(f"Fetching {self.provider} models...", total=None)
-            models = self.list_groq_models() if self.provider == "Groq" else self.list_ollama_models()
+            if step == 1:
+                prov_table = Table(show_header=True, header_style="bold magenta", expand=False, border_style="blue")
+                prov_table.add_column("Key", style="bold cyan", justify="center")
+                prov_table.add_column("Provider", style="bold green")
+                prov_table.add_column("Features", style="italic white")
+                prov_table.add_row("1", "Groq (Cloud)", "🚀 Blazing fast, Llama-3 support. (Requires API Key)")
+                prov_table.add_row("2", "Ollama (Local)", "💻 Runs entirely on your PC. Private & Offline.")
+                
+                self.console.print("\n[bold]Step 1: Select AI Provider[/bold]")
+                self.console.print(prov_table)
+                
+                p_choice = Prompt.ask("\n[bold yellow]Choice[/bold yellow]", choices=["1", "2"], default="1" if self.provider=="Groq" else "2")
+                self.provider = "Groq" if p_choice == "1" else "Ollama"
+                step = 2
 
-        if not models:
-            self.model = Prompt.ask("No models found. Enter model name manually", default="llama3")
-        else:
-            self.model = Prompt.ask("Select model", choices=models, default=self.model if self.model in models else models[0])
+            elif step == 2:
+                if self.provider == "Groq":
+                    self.console.print("\n[bold]Step 2: Groq API Configuration[/bold]")
+                    self.console.print("[dim]Get your key from [underline]https://console.groq.com/keys[/underline][/dim]\n")
+                    
+                    if self.api_key and "gsk_" in self.api_key:
+                        masked_key = f"{self.api_key[:8]}{'*' * 20}{self.api_key[-4:]}"
+                        self.console.print(f"Current Key: [green]{masked_key}[/green]")
+                        choice = Prompt.ask("Use existing key, enter new one, or go back?", choices=["use", "new", "back"], default="use")
+                        if choice == "back":
+                            step = 1
+                            continue
+                        if choice == "new":
+                            self.api_key = Prompt.ask("[bold yellow]Enter Groq API Key[/bold yellow]", password=True)
+                    else:
+                        self.api_key = Prompt.ask("[bold yellow]Enter Groq API Key (or type 'back')[/bold yellow]", password=True)
+                        if self.api_key.lower() == "back":
+                            step = 1
+                            continue
+                step = 3
+
+            elif step == 3:
+                self.console.print(f"\n[bold]Step 3: Model Selection ({self.provider})[/bold]")
+                models = []
+                with Progress(SpinnerColumn(), TextColumn("[progress.description]{task.description}"), transient=True) as progress:
+                    progress.add_task(f"[magenta]Scanning {self.provider} models...[/magenta]", total=None)
+                    if self.provider == "Groq":
+                        models = self.list_groq_models()
+                    else:
+                        models = self.list_ollama_models()
+
+                if not models:
+                    self.console.print(Panel("[bold red]Warning:[/bold red] No models found!", border_style="red"))
+                    action = Prompt.ask("Enter manually or go back?", choices=["manual", "back"], default="manual")
+                    if action == "back":
+                        step = 2 if self.provider == "Groq" else 1
+                        continue
+                    self.model = Prompt.ask("Enter model name manually", default="llama3")
+                else:
+                    mod_table = Table(show_header=True, header_style="bold blue", expand=True, border_style="dim")
+                    mod_table.add_column("ID", style="bold cyan", justify="center")
+                    mod_table.add_column("Model Name", style="white")
+                    mod_table.add_column("Family", style="magenta")
+                    mod_table.add_column("Params/Size", style="green")
+                    
+                    for i, m in enumerate(models):
+                        size_info = m.get('size', m.get('params', 'N/A'))
+                        mod_table.add_row(str(i + 1), m['id'], m['family'], size_info)
+                        
+                    self.console.print(mod_table)
+                    
+                    choices_str = [str(i+1) for i in range(len(models))] + ["back"]
+                    
+                    current_model_idx = -1
+                    for i, m in enumerate(models):
+                        if m['id'] == self.model:
+                            current_model_idx = i
+                            break
+                    
+                    def_idx = str(current_model_idx + 1) if current_model_idx != -1 else "1"
+                        
+                    m_choice = Prompt.ask("\n[bold yellow]Select model index or 'back'[/bold yellow]", choices=choices_str, default=def_idx)
+                    
+                    if m_choice == "back":
+                        step = 2 if self.provider == "Groq" else 1
+                        continue
+                        
+                    self.model = models[int(m_choice)-1]['id']
+                
+                step = 4
 
         self.save_settings()
-        self.console.print(f"\n[bold green]Settings Saved![/bold green] Ready to use [cyan]{self.provider}[/cyan] with [yellow]{self.model}[/yellow].\n")
+        self.console.clear()
+        success_panel = Panel(
+            f"🚀 [white]Provider:[/white] [cyan]{self.provider}[/cyan]\n"
+            f"🧠 [white]Model:[/white]    [yellow]{self.model}[/yellow]",
+            title="[bold green]✅ Configuration Complete[/bold green]",
+            border_style="green",
+            expand=False
+        )
+        self.console.print(success_panel)
+        time.sleep(1)
 
-    def ask_ai(self, prompt):
-        sys_info = self.get_detailed_system_info()
-        sys_msg = (
-            f"You are 'OllamaCode', an expert autonomous AI terminal agent.\n"
-            f"SYSTEM CONTEXT: {sys_info} | Current Path: {self.cwd}\n"
-            "Suggest terminal commands inside ```bash ... ``` blocks for execution.\n"
-            "Be precise and always assume you have sudo privileges if needed (but warn the user)."
+    def ask_ai(self):
+        system_msg = (
+            "You are 'OllamaCode', an autonomous software and terminal agent (similar to Claude Code).\n"
+            f"{self.get_system_context()}\n"
+            "You can execute shell commands to fulfill user requests.\n"
+            "To run a command, wrap it strictly in a ```bash ... ``` block.\n"
+            "If the user approves, the command will execute and the OUTPUT (stdout/stderr) will be sent back to YOU.\n"
+            "Analyze the output, fix errors if any by suggesting new commands, or report the final result if finished.\n"
+            "Use bash blocks only when necessary. Use plain text for explanations."
         )
         
-        messages = [{"role": "system", "content": sys_msg}] + self.history + [{"role": "user", "content": prompt}]
+        messages = [{"role": "system", "content": system_msg}] + self.history[-15:]
 
         try:
             if self.provider == "Groq":
                 headers = {"Authorization": f"Bearer {self.api_key}", "Content-Type": "application/json"}
-                response = requests.post(self.groq_url, headers=headers, json={"messages": messages, "model": self.model}, timeout=20)
+                response = requests.post(self.groq_url, headers=headers, json={"messages": messages, "model": self.model}, timeout=30)
                 if response.status_code == 200:
-                    content = response.json()['choices'][0]['message']['content']
+                    res_content = response.json()['choices'][0]['message']['content']
                 else:
-                    return f"Error: Groq returned {response.status_code} - {response.text}"
+                    return f"⚠️ Groq Error: {response.status_code} - {response.text}"
             else:
-                response = requests.post(f"{self.ollama_url}/api/chat", json={"model": self.model, "messages": messages, "stream": False}, timeout=90)
+                response = requests.post(f"{self.ollama_url}/api/chat", json={"model": self.model, "messages": messages, "stream": False}, timeout=120)
                 if response.status_code == 200:
-                    content = response.json()['message']['content']
+                    res_content = response.json()['message']['content']
                 else:
-                    return f"Error: Ollama returned {response.status_code} - {response.text}"
+                    return f"⚠️ Ollama Error: {response.status_code} - {response.text}"
 
-            self.history.append({"role": "user", "content": prompt})
-            self.history.append({"role": "assistant", "content": content})
-            if len(self.history) > 20: self.history = self.history[-20:]
-            return content
+            self.history.append({"role": "assistant", "content": res_content})
+            return res_content
 
         except Exception as e:
-            return f"Connection Failed: {str(e)}"
+            return f"❌ Connection Error: {str(e)}"
+
+    def execute_command(self, cmd):
+        try:
+            if cmd.strip().startswith("cd "):
+                new_dir = cmd.strip().split("cd ")[1].strip()
+                os.chdir(new_dir)
+                self.cwd = os.getcwd()
+                return f"Directory changed to: {self.cwd}", ""
+            
+            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=self.cwd)
+            return result.stdout, result.stderr
+        except Exception as e:
+            return "", str(e)
 
     def run(self):
         self.setup()
+        self.console.print("\n[dim italic]💡 Tip: Ask 'List files in this folder' or use '/clear' to reset chat.[/dim italic]\n")
+        
         while True:
             cpu, ram, disk = self.get_system_stats()
-            rprint(f"[dim]Stats: CPU {cpu}% | RAM {ram}% | Disk {disk}% | {self.cwd}[/dim]")
-            user_input = Prompt.ask("\n[bold green]OllamaCode >[/bold green]")
+            rprint(f"[dim]CPU %{cpu} | RAM %{ram} | {self.cwd}[/dim]")
+            user_input = Prompt.ask("[bold green]OllamaCode >[/bold green]")
             
-            if user_input.lower() in ['q', 'exit', 'quit']:
-                self.console.print("[bold red]Shutting down OllamaCode. Goodbye![/bold red]")
+            if user_input.lower() in ['q', 'exit', 'quit', '/quit']:
+                self.console.print("[bold red]OllamaCode is shutting down. Goodbye![/bold red]")
                 break
+            
+            if user_input.lower() in ['/clear', 'clear']:
+                self.console.clear()
+                self.history = []
+                continue
 
-            with Progress(SpinnerColumn(), TextColumn(f"[cyan]{self.model} is analyzing...[/cyan]"), transient=True) as progress:
-                progress.add_task("", total=None)
-                answer = self.ask_ai(user_input)
-            
-            self.console.print(Panel(Markdown(answer), title=f"🤖 {self.model}", border_style="cyan"))
-            
-            commands = re.findall(r'```(?:bash|sh|shell)\n(.*?)```', answer, re.DOTALL | re.IGNORECASE)
-            for cmd in commands:
-                cmd = cmd.strip()
-                if cmd:
-                    self.console.print(Panel(f"[bold yellow]Suggested Action:[/bold yellow]\n{cmd}", border_style="yellow"))
-                    if Confirm.ask("Execute this command?"):
-                        if cmd.startswith("cd "):
-                            try:
-                                target = cmd.split(" ", 1)[1]
-                                os.chdir(os.path.expanduser(target))
-                                self.cwd = os.getcwd()
-                                self.console.print(f"[bold blue]Directory changed to: {self.cwd}[/bold blue]")
-                            except Exception as e:
-                                self.console.print(f"[bold red]Failed to change directory: {e}[/bold red]")
-                        else:
-                            try:
-                                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=self.cwd)
-                                if result.stdout: self.console.print(Panel(result.stdout, title="Output", border_style="green"))
-                                if result.stderr: self.console.print(Panel(result.stderr, title="Error Record", border_style="red"))
-                            except Exception as e:
-                                self.console.print(f"[bold red]Execution error: {e}[/bold red]")
+            self.history.append({"role": "user", "content": user_input})
+
+            while True:
+                with Progress(SpinnerColumn(), TextColumn(f"[cyan]{self.model} is thinking...[/cyan]"), transient=True) as progress:
+                    progress.add_task("", total=None)
+                    answer = self.ask_ai()
+                
+                self.console.print(Panel(Markdown(answer), title="🤖 OllamaCode", border_style="cyan"))
+                
+                commands = re.findall(r'```(?:bash|sh|shell)\n(.*?)```', answer, re.DOTALL | re.IGNORECASE)
+                
+                if not commands:
+                    break
+                
+                any_executed = False
+                for cmd in commands:
+                    cmd = cmd.strip()
+                    if not cmd: continue
+                    
+                    self.console.print(Panel(f"[bold cyan]Action Needed:[/bold cyan]\n[white]{cmd}[/white]", border_style="yellow", title="⚡ Pending Command"))
+                    
+                    if Confirm.ask("[bold yellow]Execute this command?[/bold yellow]"):
+                        any_executed = True
+                        with Progress(SpinnerColumn(), TextColumn("[cyan]Executing...[/cyan]"), transient=True) as progress:
+                            progress.add_task("", total=None)
+                            stdout, stderr = self.execute_command(cmd)
+                        
+                        if stdout:
+                            self.console.print(Panel(stdout, title="[bold green]Stdout[/bold green]", border_style="green"))
+                        if stderr:
+                            self.console.print(Panel(stderr, title="[bold red]Stderr[/bold red]", border_style="red"))
+                        
+                        result_msg = f"Command output:\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}"
+                        self.history.append({"role": "user", "content": result_msg})
+                    else:
+                        break
+                
+                if not any_executed:
+                    break
 
 def main():
-    try:
-        OllamaCode().run()
-    except KeyboardInterrupt:
-        print("\nExiting...")
-        sys.exit(0)
+    agent = OllamaCodeAgent()
+    agent.run()
 
 if __name__ == "__main__":
     main()
