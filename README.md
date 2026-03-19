@@ -2,8 +2,6 @@
 
 A high-performance AI Terminal Assistant that connects to **Groq Cloud** and **Ollama Local** to help you execute shell commands, analyze your system, and automate tasks.
 
-https://github.com/user-attachments/assets/11be32ea-8771-4bb4-b4e9-ab9b8f362a53
-
 ## Features
 
 - **Multi-Provider**: Use blazing fast models from Groq or private local models via Ollama.
@@ -26,16 +24,22 @@ https://github.com/user-attachments/assets/11be32ea-8771-4bb4-b4e9-ab9b8f362a53
    ```
 
 3. **Run OllamaCode**:
+
+![Kooha-2026-03-19-14-48-08](https://github.com/user-attachments/assets/214678ac-4eb0-4ebf-8a24-0f00d266763c)
+
    ```bash
    ollamacode
    ```
    
-4. **Update OllamaCode**:
+5. **Update OllamaCode**:
    ```bash
    ollamacode update
    ```
 
-5. **Settings & Configuration**:
+6. **Settings & Configuration**:
+
+![Kooha-2026-03-19-14-46-01](https://github.com/user-attachments/assets/24dfe48e-7a20-4312-a890-cc11cdc5cf51)
+
    ```bash
    ollamacode settings
    ```
