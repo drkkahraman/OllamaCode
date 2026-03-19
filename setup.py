@@ -1,8 +1,14 @@
-from setuptools import setup
+import os
+from setuptools import setup, find_packages
 
 setup(
     name="ollamacode",
-    version="0.1.0",
+    version="3.1.0",
+    author="Doruk",
+    description="High-performance AI Terminal Agent powered by Groq and Ollama",
+    long_description=open("README.md").read() if os.path.exists("README.md") else "",
+    long_description_content_type="text/markdown",
+    url="https://github.com/doruk/ollamacode",
     py_modules=["ollamacode"],
     install_requires=[
         "requests",
@@ -15,7 +21,10 @@ setup(
             "ollamacode=ollamacode:main",
         ],
     },
-    author="Your Name",
-    description="A powerful AI-powered terminal assistant connecting Groq and Ollama.",
+    classifiers=[
+        "Programming Language :: Python :: 3",
+        "License :: OSI Approved :: MIT License",
+        "Operating System :: OS Independent",
+    ],
     python_requires=">=3.8",
 )
