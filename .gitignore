@@ -8,6 +8,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+node_modules/
 .ollamacode_settings.json
 aura_settings.json
 dist/
