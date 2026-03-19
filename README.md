@@ -1,21 +1,15 @@
-# OllamaCoder 1.1.2
+# OllamaCoder 1.2.3
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks. This project supports both **Node.js (NPM)** and **Python**.
 
 ## Node.js Installation (NPM)
 
-1. **Clone the repository**:
+1. **Install the package globally**:
    ```bash
-   git clone https://github.com/drkkahraman/OllamaCode.git
-   cd OllamaCode
+   npm install -g ollamacoder
    ```
 
-2. **Install the package**:
-   ```bash
-   npm install -g .
-   ```
-
-3. **Run OllamaCoder**:
+2. **Run OllamaCoder**:
    ```bash
    ollamacoder
    ```
@@ -26,6 +20,8 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 1. **Install via pip**:
    ```bash
+   git clone https://github.com/drkkahraman/OllamaCoder.git
+   cd OllamaCoder
    pip install -e .
    ```
 

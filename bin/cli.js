@@ -109,7 +109,7 @@ async function runAgent(forceSetup = false) {
 program
     .name('ollamacoder')
     .description('AI-Powered Autonomous Terminal Agent')
-    .version('1.1.2');
+    .version('1.2.3');
 
 program
     .command('update')
