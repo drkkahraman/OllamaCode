@@ -5,16 +5,14 @@ import boxen from 'boxen';
 import inquirer from 'inquirer';
 import ora from 'ora';
 import { marked } from 'marked';
-import { TerminalRenderer } from 'marked-terminal';
+import { markedTerminal } from 'marked-terminal';
 import { loadSettings, saveSettings } from '../lib/config.js';
 import { getSystemStats, checkUpdate } from '../lib/utils.js';
 import { setupWizard, showStatus, showStats } from '../lib/ui.js';
 import { executeCommand } from '../lib/terminal.js';
 import { OllamaCodeAgent } from '../lib/agent.js';
 
-marked.setOptions({
-    renderer: new TerminalRenderer()
-});
+marked.use(markedTerminal());
 
 const program = new Command();
 
