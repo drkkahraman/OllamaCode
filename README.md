@@ -1,4 +1,4 @@
-# OllamaCode 1.0.1
+# OllamaCode 1.0.3
 
 A high-performance AI Terminal Assistant that connects to **Groq Cloud** and **Ollama Local** to help you execute shell commands, analyze your system, and automate tasks.
 
@@ -31,6 +31,11 @@ https://github.com/user-attachments/assets/11be32ea-8771-4bb4-b4e9-ab9b8f362a53
 3. **Run OllamaCode**:
    ```bash
    ollamacode
+   ```
+   
+4. **Update OllamaCode**:
+   ```bash
+   ollamacode update
    ```
 
 ## Configuration
