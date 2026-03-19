@@ -119,6 +119,33 @@ program
     });
 
 program
+    .command('plugins')
+    .action(async () => {
+        const os = await import('os');
+        const fs = await import('fs');
+        const path = await import('path');
+        const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
+        if (!fs.existsSync(pluginDir)) fs.mkdirSync(pluginDir, { recursive: true });
+        const plugins = fs.readdirSync(pluginDir).filter(f => f.endsWith('.js'));
+        console.log(boxen(plugins.join('\n') || 'No plugins found', { title: 'Plugins', borderColor: 'blue', padding: 1 }));
+    });
+
+program
+    .command('add <type> [path]')
+    .action(async (type, pluginPath) => {
+        if (type === 'plugin') {
+            const os = await import('os');
+            const fs = await import('fs');
+            const path = await import('path');
+            if (!pluginPath || !fs.existsSync(pluginPath)) { console.log(chalk.red('File not found')); return; }
+            const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
+            if (!fs.existsSync(pluginDir)) fs.mkdirSync(pluginDir, { recursive: true });
+            fs.copyFileSync(pluginPath, path.join(pluginDir, path.basename(pluginPath)));
+            console.log(chalk.green(`Added plugin: ${path.basename(pluginPath)}`));
+        }
+    });
+
+program
     .command('settings')
     .action(() => runAgent(true));
 

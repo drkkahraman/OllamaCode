@@ -75,10 +75,33 @@ def run_agent(force_setup=False):
         except Exception:
             console.print("[bold red]Fatal Error:[/bold red]"); console.print(traceback.format_exc()); break
 
+def list_plugins():
+    plugin_dir = os.path.join(os.path.expanduser("~"), ".ollamacode", "plugins")
+    if not os.path.exists(plugin_dir):
+        os.makedirs(plugin_dir, exist_ok=True)
+    plugins = [f for f in os.listdir(plugin_dir) if f.endswith('.py')]
+    console.print(Panel("\n".join(plugins) if plugins else "No plugins found", title="Plugins", border_style="blue"))
+
+def add_plugin(path):
+    plugin_dir = os.path.join(os.path.expanduser("~"), ".ollamacode", "plugins")
+    if not os.path.exists(plugin_dir):
+        os.makedirs(plugin_dir, exist_ok=True)
+    if not os.path.exists(path):
+        console.print(f"[red]File {path} not found[/red]")
+        return
+    import shutil
+    shutil.copy(path, os.path.join(plugin_dir, os.path.basename(path)))
+    console.print(f"[green]Added plugin: {os.path.basename(path)}[/green]")
+
 def main():
     if len(sys.argv) > 1:
         if sys.argv[1] == "update": main_update(); return
         if sys.argv[1] == "settings": run_agent(force_setup=True); return
+        if sys.argv[1] == "plugins": list_plugins(); return
+        if sys.argv[1] == "add" and len(sys.argv) > 2 and sys.argv[2] == "plugin":
+            if len(sys.argv) > 3: add_plugin(sys.argv[3])
+            else: console.print("[red]Please specify plugin path[/red]")
+            return
     run_agent()
 
 if __name__ == "__main__":
