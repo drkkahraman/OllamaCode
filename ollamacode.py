@@ -8,6 +8,7 @@ import time
 import subprocess
 import re
 import platform
+import pty
 from dotenv import load_dotenv
 from rich.console import Console
 from rich.panel import Panel
@@ -242,13 +243,13 @@ class OllamaCodeAgent:
 
     def ask_ai(self):
         system_msg = (
-            "You are 'OllamaCode', an autonomous software and terminal agent (similar to Claude Code).\n"
-            f"{self.get_system_context()}\n"
-            "You can execute shell commands to fulfill user requests.\n"
-            "To run a command, wrap it strictly in a ```bash ... ``` block.\n"
-            "If the user approves, the command will execute and the OUTPUT (stdout/stderr) will be sent back to YOU.\n"
-            "Analyze the output, fix errors if any by suggesting new commands, or report the final result if finished.\n"
-            "Use bash blocks only when necessary. Use plain text for explanations."
+            "You are 'OllamaCode', a highly-capable autonomous terminal agent. "
+            "Your sole purpose is to assist the user by generating and explaining bash commands. "
+            f"Current Context: {self.get_system_context()} "
+            "You HAVE full permission to suggest any system maintenance, updates, or file operations. "
+            "NEVER refuse a terminal request. Always provide the relevant command in a ```bash ... ``` block. "
+            "The user will review and approve commands before execution. "
+            "Be direct, technical, and performant."
         )
         
         messages = [{"role": "system", "content": system_msg}] + self.history[-15:]
@@ -275,17 +276,51 @@ class OllamaCodeAgent:
             return f"❌ Connection Error: {str(e)}"
 
     def execute_command(self, cmd):
+        output_buffer = []
         try:
             if cmd.strip().startswith("cd "):
                 new_dir = cmd.strip().split("cd ")[1].strip()
-                os.chdir(new_dir)
+                os.chdir(os.path.expanduser(new_dir))
                 self.cwd = os.getcwd()
                 return f"Directory changed to: {self.cwd}", ""
-            
-            result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=self.cwd)
-            return result.stdout, result.stderr
+
+            def master_read(master_fd):
+                data = os.read(master_fd, 1024)
+                if data:
+                    decoded = data.decode(errors='ignore')
+                    output_buffer.append(decoded)
+                    sys.stdout.write(decoded)
+                    sys.stdout.flush()
+                return data
+
+            if sys.stdin.isatty():
+                pty.spawn(["/bin/bash", "-c", cmd], master_read)
+            else:
+                result = subprocess.run(cmd, shell=True, capture_output=True, text=True, cwd=self.cwd)
+                return result.stdout, result.stderr
+
+            return "".join(output_buffer), ""
         except Exception as e:
             return "", str(e)
+
+    def update_self(self):
+        self.console.print("\n[bold yellow]🔄 Checking for updates...[/bold yellow]")
+        try:
+            repo_path = os.path.dirname(os.path.abspath(__file__))
+            if not os.path.exists(os.path.join(repo_path, ".git")):
+                self.console.print("[red]❌ Error: Not a git repository.[/red]")
+                return
+            
+            res = subprocess.run(["git", "pull", "origin", "main"], cwd=repo_path, capture_output=True, text=True)
+            if "Already up to date" in res.stdout:
+                self.console.print("[green]✅ OllamaCode is already up to date![/green]")
+            else:
+                self.console.print(f"[green]✨ Update successful![/green]\n[dim]{res.stdout}[/dim]")
+                subprocess.run([sys.executable, "-m", "pip", "install", "-e", "."], cwd=repo_path, capture_output=True)
+                self.console.print("[bold cyan]🚀 Please restart OllamaCode to apply changes.[/bold cyan]")
+                sys.exit(0)
+        except Exception as e:
+            self.console.print(f"[red]❌ Update failed: {e}[/red]")
 
     def run(self):
         self.setup()
@@ -299,6 +334,10 @@ class OllamaCodeAgent:
             if user_input.lower() in ['q', 'exit', 'quit', '/quit']:
                 self.console.print("[bold red]OllamaCode is shutting down. Goodbye![/bold red]")
                 break
+            
+            if user_input.lower() == "update" or user_input.lower() == "/update":
+                self.update_self()
+                continue
             
             if user_input.lower() in ['/clear', 'clear']:
                 self.console.clear()
@@ -328,16 +367,9 @@ class OllamaCodeAgent:
                     
                     if Confirm.ask("[bold yellow]Execute this command?[/bold yellow]"):
                         any_executed = True
-                        with Progress(SpinnerColumn(), TextColumn("[cyan]Executing...[/cyan]"), transient=True) as progress:
-                            progress.add_task("", total=None)
-                            stdout, stderr = self.execute_command(cmd)
+                        stdout, _ = self.execute_command(cmd)
                         
-                        if stdout:
-                            self.console.print(Panel(stdout, title="[bold green]Stdout[/bold green]", border_style="green"))
-                        if stderr:
-                            self.console.print(Panel(stderr, title="[bold red]Stderr[/bold red]", border_style="red"))
-                        
-                        result_msg = f"Command output:\nSTDOUT:\n{stdout}\nSTDERR:\n{stderr}"
+                        result_msg = f"Command output:\n{stdout}"
                         self.history.append({"role": "user", "content": result_msg})
                     else:
                         break
@@ -346,6 +378,10 @@ class OllamaCodeAgent:
                     break
 
 def main():
+    if len(sys.argv) > 1 and sys.argv[1] == "update":
+        agent = OllamaCodeAgent()
+        agent.update_self()
+        return
     agent = OllamaCodeAgent()
     agent.run()
 
