@@ -22,6 +22,18 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 ---
 
+## NPM Installation (via GitHub)
+
+```bash
+npm install -g github:drkkahraman/OllamaCode
+```
+
+```bash
+ollamacode
+```
+
+---
+
 ## Configuration
 
 OllamaCode will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
