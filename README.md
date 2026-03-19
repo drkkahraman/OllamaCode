@@ -31,12 +31,12 @@ A high performance AI Terminal Assistant that connects to **Groq Cloud** and **O
    ollamacode
    ```
    
-5. **Update OllamaCode**:
+4. **Update OllamaCode**:
    ```bash
    ollamacode update
    ```
 
-6. **Settings & Configuration**:
+5. **Settings & Configuration**:
 
 ![Kooha-2026-03-19-14-46-01](https://github.com/user-attachments/assets/24dfe48e-7a20-4312-a890-cc11cdc5cf51)
 
