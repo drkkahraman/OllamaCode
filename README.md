@@ -1,6 +1,6 @@
 # OllamaCode 1.0.4
 
-A high-performance AI Terminal Assistant that connects to **Groq Cloud** and **Ollama Local** to help you execute shell commands, analyze your system, and automate tasks.
+A high performance AI Terminal Assistant that connects to **Groq Cloud** and **Ollama Local** to help you execute shell commands, analyze your system, and automate tasks.
 
 ## Features
 
