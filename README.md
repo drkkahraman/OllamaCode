@@ -1,31 +1,21 @@
 # OllamaCode 1.2.3
 
-A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks. This project supports both **Node.js (NPM)** and **Python**.
+A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
 
-## Node.js Installation (NPM)
+## Quick Start
 
-1. **Install the package globally**:
-   ```bash
-   npm install -g ollamacode
-   ```
-
-2. **Run OllamaCode**:
-   ```bash
-   ollamacode
-   ```
-
----
-
-## Python Installation
-
-1. **Install via pip**:
+1. **Clone the repository**:
    ```bash
    git clone https://github.com/drkkahraman/OllamaCode.git
    cd OllamaCode
+   ```
+
+2. **Install the package**:
+   ```bash
    pip install -e .
    ```
 
-2. **Run Python version**:
+3. **Run OllamaCode**:
    ```bash
    ollamacode
    ```
@@ -44,19 +34,7 @@ When enabled, OllamaCode automatically analyzes terminal errors and suggest corr
 
 To ensure safety in autonomous modes, the agent detects if it is repeating the same command with the same outcome and will automatically halt the process to prevent infinite loops.
 
-## Dependencies (NPM)
-
-- axios
-- systeminformation
-- commander
-- inquirer
-- chalk
-- boxen
-- ora
-- marked
-- marked-terminal
-
-## Dependencies (Python)
+## Dependencies
 
 - requests
 - psutil
