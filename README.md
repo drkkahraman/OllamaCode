@@ -44,6 +44,7 @@ pip install ollamacode
 ```bash
 npm install -g github:drkkahraman/OllamaCode
 ```
+![Kooha-2026-03-20-00-06-48](https://github.com/user-attachments/assets/ebffb402-6dd9-463b-ae2c-cfecc0b4145c)
 
 ```bash
 ollamacode
