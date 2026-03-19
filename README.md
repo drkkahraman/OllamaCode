@@ -1,4 +1,4 @@
-# OllamaCode 1.1.1
+# OllamaCode 1.1.2
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
 
@@ -12,7 +12,7 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 2. **Install the package**:
    ```bash
-   pip install -e .
+   npm install -g .
    ```
 
 3. **Run OllamaCode**:
@@ -50,7 +50,12 @@ To ensure safety in autonomous modes, the agent detects if it is repeating the s
 
 ## Dependencies
 
-- requests
-- psutil
-- python-dotenv
-- rich
+- axios
+- systeminformation
+- commander
+- inquirer
+- chalk
+- boxen
+- ora
+- marked
+- marked-terminal
