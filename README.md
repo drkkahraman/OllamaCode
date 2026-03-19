@@ -2,6 +2,12 @@
 
 A high-performance AI Terminal Assistant that connects to **Groq Cloud** and **Ollama Local** to help you execute shell commands, analyze your system, and automate tasks.
 
+
+
+https://github.com/user-attachments/assets/11be32ea-8771-4bb4-b4e9-ab9b8f362a53
+
+
+
 ## Features
 
 - **Multi-Provider**: Use blazing fast models from Groq or private local models via Ollama.
