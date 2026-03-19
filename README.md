@@ -13,7 +13,7 @@ A high-performance AI Terminal Assistant that connects to **Groq Cloud** and **O
 
 1. **Clone the repository**:
    ```bash
-   git clone https://github.com/drkkahraman/ollamacode.git
+   git clone https://github.com/drkkahraman/OllamaCode.git
    cd ollamacode
    ```
 
