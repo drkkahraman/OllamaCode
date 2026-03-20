@@ -1,4 +1,4 @@
-# OllamaCode 1.1.6
+# OllamaCode 1.1.7
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
 
@@ -8,6 +8,7 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 - **Autonomous Operations**: Enable auto-run and auto-fix to let the AI solve complex terminal tasks for you.
 - **Cross-Platform Compatibility**: Works on Linux, macOS, and Windows with both Python and Node.js environments.
 - **Plugin Architecture**: Easily extend capabilities by adding custom Python (.py) or JavaScript (.js) plugins.
+- **Advanced Coding Assistant**: Built-in tools for the AI to navigate projects, read files with line numbers, and write code accurately.
 - **Resource Monitoring**: Real-time system stats (CPU, RAM) displayed directly in your terminal.
 - **Secure Configuration**: Settings and API keys are stored locally and never shared.
 
@@ -116,6 +117,11 @@ To make code development easier, OllamaCode provides built-in utilities for the 
 - `ollamacode cat-file <file>`: Reads a file with line numbers for precise reference.
 - `ollamacode write-file <file> "<content>"`: Quickly writes or overwrites code files.
 
+### Why these tools?
+- **Better Context**: The AI can see all your files using `tree`, so it doesn't get lost.
+- **Precise Editing**: By using `cat-file`, the AI sees line numbers, allowing it to give you perfect instructions for specific lines.
+- **Fast Automation**: The `write-file` command allows the AI to generate entire modules for you in a single step.
+
 ## CLI Reference
 
 - `ollamacode`: Launches the main AI assistant.
@@ -124,6 +130,9 @@ To make code development easier, OllamaCode provides built-in utilities for the 
 - `ollamacode plugins`: Displays all currently installed plugins.
 - `ollamacode add plugin <path>`: Registers a new plugin for use.
 - `ollamacode run <name> [args]`: Executes a specific plugin.
+- `ollamacode tree`: Shows the current directory structure (max-depth 2).
+- `ollamacode cat-file <file>`: Displays file content with line numbers.
+- `ollamacode write-file <file> <content>`: Writes content to a specified file.
 
 ## Dependencies
 
