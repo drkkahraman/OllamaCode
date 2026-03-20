@@ -93,6 +93,20 @@ def add_plugin(path):
     shutil.copy(path, os.path.join(plugin_dir, os.path.basename(path)))
     console.print(f"[green]Added plugin: {os.path.basename(path)}[/green]")
 
+def run_plugin(name, args):
+    plugin_dir = os.path.join(os.path.expanduser("~"), ".ollamacode", "plugins")
+    path = os.path.join(plugin_dir, name)
+    if not os.path.exists(path):
+        console.print(f"[red]Plugin {name} not found[/red]")
+        return
+    
+    if name.endswith(".py"):
+        subprocess.run([sys.executable, path] + args)
+    elif name.endswith(".js"):
+        subprocess.run(["node", path] + args)
+    else:
+        subprocess.run([path] + args)
+
 def main():
     if len(sys.argv) > 1:
         if sys.argv[1] == "update": main_update(); return
@@ -101,6 +115,9 @@ def main():
         if sys.argv[1] == "add" and len(sys.argv) > 2 and sys.argv[2] == "plugin":
             if len(sys.argv) > 3: add_plugin(sys.argv[3])
             else: console.print("[red]Please specify plugin path[/red]")
+            return
+        if sys.argv[1] == "run" and len(sys.argv) > 2:
+            run_plugin(sys.argv[2], sys.argv[3:])
             return
     run_agent()
 

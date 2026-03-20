@@ -80,6 +80,35 @@ ollamacode add plugin /path/to/plugin.js
 ollamacode plugins
 ```
 
+### Running a Plugin
+```bash
+ollamacode run <plugin_name> [args]
+```
+
+### How to Create a Plugin
+
+A plugin is simply a script (Python or Node.js) that can take arguments from the command line.
+
+**Python Plugin Example (`hello.py`):**
+```python
+import sys
+if __name__ == "__main__":
+    name = sys.argv[1] if len(sys.argv) > 1 else "World"
+    print(f"Hello from Plugin: {name}")
+```
+
+**Node.js Plugin Example (`hello.js`):**
+```javascript
+const name = process.argv[2] || "World";
+console.log(`Hello from Node Plugin: ${name}`);
+```
+
+After creating your script, add it using:
+```bash
+ollamacode add plugin path/to/your_script.py
+```
+OllamaCode will then automatically list it as an available tool during your AI sessions.
+
 ## CLI Reference
 
 - `ollamacode`: Launches the main AI assistant.
@@ -87,6 +116,7 @@ ollamacode plugins
 - `ollamacode update`: Automatically pulls the latest version and updates dependencies.
 - `ollamacode plugins`: Displays all currently installed plugins.
 - `ollamacode add plugin <path>`: Registers a new plugin for use.
+- `ollamacode run <name> [args]`: Executes a specific plugin.
 
 ## Dependencies
 

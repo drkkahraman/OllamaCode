@@ -146,6 +146,25 @@ program
     });
 
 program
+    .command('run <name> [args...]')
+    .action(async (name, args) => {
+        const os = await import('os');
+        const fs = await import('fs');
+        const path = await import('path');
+        const { spawn } = await import('child_process');
+        const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
+        const pluginPath = path.join(pluginDir, name);
+        if (!fs.existsSync(pluginPath)) { console.log(chalk.red(`Plugin ${name} not found`)); return; }
+
+        let cmd = pluginPath;
+        let finalArgs = args;
+        if (name.endsWith('.py')) { cmd = 'python3'; finalArgs = [pluginPath, ...args]; }
+        if (name.endsWith('.js')) { cmd = 'node'; finalArgs = [pluginPath, ...args]; }
+
+        spawn(cmd, finalArgs, { stdio: 'inherit', shell: true });
+    });
+
+program
     .command('settings')
     .action(() => runAgent(true));
 

@@ -19,9 +19,13 @@ class OllamaCodeAgent:
         self.history = clipped
 
     def ask_ai(self, cwd):
+        from .utils import list_installed_plugins
+        plugins = list_installed_plugins()
+        plugin_info = f"Available Plugins: {', '.join(plugins)}. To run a plugin, use: ````ollamacode run <plugin_name> <args> ````" if plugins else ""
         system_msg = (
             "You are 'OllamaCode', an autonomous terminal agent. "
             f"Context: {get_system_context(cwd)} "
+            f"{plugin_info} "
             "Suggest bash commands in ```bash ... ``` blocks. "
             "If the task is complete, STOP."
         )

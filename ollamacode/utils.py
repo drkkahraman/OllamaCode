@@ -43,6 +43,11 @@ def list_groq_models(api_key):
     except: pass
     return [{"id": "llama-3.3-70b-versatile", "family": "Llama 3.3"}]
 
+def list_installed_plugins():
+    plugin_dir = os.path.join(os.path.expanduser("~"), ".ollamacode", "plugins")
+    if not os.path.exists(plugin_dir): return []
+    return [f for f in os.listdir(plugin_dir) if f.endswith('.py') or f.endswith('.js')]
+
 def check_update(repo_path):
     if not os.path.exists(os.path.join(repo_path, ".git")): return None, None, "Not a git repository."
     try:
