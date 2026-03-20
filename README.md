@@ -12,6 +12,15 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 - **Resource Monitoring**: Real-time system stats (CPU, RAM) displayed directly in your terminal.
 - **Secure Configuration**: Settings and API keys are stored locally and never shared.
 
+## Complete Feature List
+
+OllamaCode is designed to be the ultimate developer companion:
+1. **Interactive Shell**: Natural language interface for your terminal.
+2. **Auto-Pilot**: Enable `auto-run` to let the AI execute commands autonomously.
+3. **Auto-Heal**: Enable `auto-fix` to let the AI fix terminal errors on its own.
+4. **Context-Aware**: Automatically includes OS and current directory information in every request.
+5. **Project Insight**: Uses specialized tools to see your code and project structure.
+
 ## Quick Start
 
 ### Installation
