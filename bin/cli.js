@@ -165,6 +165,42 @@ program
     });
 
 program
+    .command('tree')
+    .action(async () => {
+        const { execSync } = await import('child_process');
+        try {
+            console.log(execSync('find . -maxdepth 2 -not -path "*/.*"').toString());
+        } catch (e) { console.error(e.message); }
+    });
+
+program
+    .command('cat-file <file>')
+    .action(async (file) => {
+        const fs = await import('fs');
+        try {
+            const content = fs.readFileSync(file, 'utf8');
+            content.split('\n').forEach((line, i) => {
+                console.log(`${chalk.dim((i + 1).toString().padStart(3, ' '))} : ${line}`);
+            });
+        } catch (e) { console.error(chalk.red(e.message)); }
+    });
+
+program
+    .command('write-file <file> [content]')
+    .action(async (file, content) => {
+        const fs = await import('fs');
+        let data = content || "";
+        if (!content) {
+            // Read from stdin if no content provided
+            data = fs.readFileSync(0, 'utf-8');
+        }
+        try {
+            fs.writeFileSync(file, data);
+            console.log(chalk.green(`Written to ${file}`));
+        } catch (e) { console.error(chalk.red(e.message)); }
+    });
+
+program
     .command('settings')
     .action(() => runAgent(true));
 

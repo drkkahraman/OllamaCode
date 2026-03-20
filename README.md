@@ -109,6 +109,13 @@ ollamacode add plugin path/to/your_script.py
 ```
 OllamaCode will then automatically list it as an available tool during your AI sessions.
 
+### Coding Tools
+
+To make code development easier, OllamaCode provides built-in utilities for the AI:
+- `ollamacode tree`: Displays the project structure.
+- `ollamacode cat-file <file>`: Reads a file with line numbers for precise reference.
+- `ollamacode write-file <file> "<content>"`: Quickly writes or overwrites code files.
+
 ## CLI Reference
 
 - `ollamacode`: Launches the main AI assistant.

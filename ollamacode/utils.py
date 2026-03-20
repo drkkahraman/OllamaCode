@@ -15,7 +15,12 @@ def get_system_stats():
 
 def get_system_context(cwd):
     os_info = f"{platform.system()} {platform.release()}"
-    return f"Operating System: {os_info}\nCurrent Directory: {cwd}"
+    tree = ""
+    try:
+        files = os.listdir(cwd)
+        tree = "\nFiles in current dir: " + ", ".join(files[:20])
+    except: pass
+    return f"Operating System: {os_info}\nCurrent Directory: {cwd}{tree}"
 
 def list_ollama_models(ollama_url):
     try:

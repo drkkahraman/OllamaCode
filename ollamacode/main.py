@@ -119,6 +119,22 @@ def main():
         if sys.argv[1] == "run" and len(sys.argv) > 2:
             run_plugin(sys.argv[2], sys.argv[3:])
             return
+        if sys.argv[1] == "tree":
+            subprocess.run(["find", ".", "-maxdepth", "2", "-not", "-path", "*/.*"])
+            return
+        if sys.argv[1] == "cat-file" and len(sys.argv) > 2:
+            try:
+                with open(sys.argv[2], 'r') as f:
+                    for i, line in enumerate(f, 1): console.print(f"[dim]{i:3}:[/dim] {line.strip()}")
+            except Exception as e: console.print(f"[red]{e}[/red]")
+            return
+        if sys.argv[1] == "write-file" and len(sys.argv) > 2:
+            content = sys.argv[3] if len(sys.argv) > 3 else sys.stdin.read()
+            try:
+                with open(sys.argv[2], 'w') as f: f.write(content)
+                console.print(f"[green]Written to {sys.argv[2]}[/green]")
+            except Exception as e: console.print(f"[red]{e}[/red]")
+            return
     run_agent()
 
 if __name__ == "__main__":

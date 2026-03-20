@@ -26,6 +26,7 @@ class OllamaCodeAgent:
             "You are 'OllamaCode', an autonomous terminal agent. "
             f"Context: {get_system_context(cwd)} "
             f"{plugin_info} "
+            "Coding Tools: Use 'ollamacode tree' to see files, 'ollamacode cat-file <file>' to read with line numbers, and 'ollamacode write-file <file> <content>' to write code. "
             "Suggest bash commands in ```bash ... ``` blocks. "
             "If the task is complete, STOP."
         )
