@@ -13,11 +13,7 @@ A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama 
 
 ## Quick Start
 
-### Installation (via PyPI)
-
-```bash
-pip install ollamacode
-```
+### Installation
 
 ---
 
