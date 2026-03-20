@@ -28,6 +28,7 @@ class OllamaCodeAgent:
             f"{plugin_info} "
             "Coding Tools: Use 'ollamacode tree' to see files, 'ollamacode cat-file <file>' to read with line numbers, and 'ollamacode write-file <file> <content>' to write code. "
             "Suggest bash commands in ```bash ... ``` blocks. "
+            "If you are in the middle of a task, ALWAYS suggest a command. "
             "If the task is complete, STOP."
         )
         self.clip_history()
@@ -37,10 +38,16 @@ class OllamaCodeAgent:
             if self.settings["provider"] == "Groq":
                 headers = {"Authorization": f"Bearer {self.settings['api_key']}", "Content-Type": "application/json"}
                 response = requests.post(self.groq_url, headers=headers, json={"messages": messages, "model": self.settings["model"]}, timeout=30)
-                if response.status_code == 200: return response.json()['choices'][0]['message']['content']
+                if response.status_code == 200:
+                    content = response.json()['choices'][0]['message']['content']
+                    filtered = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+                    return filtered if filtered else "I have analyzed the situation. Let me suggest a command."
             else:
                 response = requests.post(f"{self.settings['ollama_url']}/api/chat", json={"model": self.settings["model"], "messages": messages, "stream": False}, timeout=150)
-                if response.status_code == 200: return response.json()['message']['content']
+                if response.status_code == 200:
+                    content = response.json()['message']['content']
+                    filtered = re.sub(r'<think>.*?</think>', '', content, flags=re.DOTALL).strip()
+                    return filtered if filtered else "I have analyzed the situation. Let me suggest a command."
             return f"Error: {response.status_code}"
         except Exception as e: return f"Connection Error: {str(e)}"
 
