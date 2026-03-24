@@ -57,6 +57,7 @@ def run_agent(force_setup=False):
                 if not cmds: break
                 
                 any_executed = False
+                loop_detected = False
                 for cmd in cmds:
                     cmd = cmd.strip()
                     if not cmd: continue
@@ -65,13 +66,16 @@ def run_agent(force_setup=False):
                         any_executed = True
                         status, stdout, new_cwd = execute_command(cmd, cwd=cwd)
                         cwd = new_cwd
-                        if (cmd, stdout) in recent_actions: console.print("[red]Loop detected![/red]"); break
+                        if (cmd, stdout) in recent_actions:
+                            console.print("[red]Loop detected![/red]")
+                            loop_detected = True
+                            break
                         recent_actions.append((cmd, stdout))
                         agent.history.append({"role": "user", "content": f"Output (status {status}):\n{stdout}"})
                         if status != 0 and settings["auto_fix"]:
                             agent.history.append({"role": "user", "content": "Previous command failed. Fix it."}); break
                     else: break
-                if not any_executed: break
+                if not any_executed or loop_detected: break
         except Exception:
             console.print("[bold red]Fatal Error:[/bold red]"); console.print(traceback.format_exc()); break
 
@@ -98,14 +102,14 @@ def run_plugin(name, args):
     path = os.path.join(plugin_dir, name)
     if not os.path.exists(path):
         console.print(f"[red]Plugin {name} not found[/red]")
-        return
+        sys.exit(1)
     
     if name.endswith(".py"):
-        subprocess.run([sys.executable, path] + args)
+        sys.exit(subprocess.run([sys.executable, path] + args).returncode)
     elif name.endswith(".js"):
-        subprocess.run(["node", path] + args)
+        sys.exit(subprocess.run(["node", path] + args).returncode)
     else:
-        subprocess.run([path] + args)
+        sys.exit(subprocess.run([path] + args).returncode)
 
 def main():
     if len(sys.argv) > 1:

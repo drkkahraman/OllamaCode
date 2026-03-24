@@ -27,6 +27,7 @@ class OllamaCodeAgent:
             f"Context: {get_system_context(cwd)} "
             f"{plugin_info} "
             "Coding Tools: Use 'ollamacode tree' to see files, 'ollamacode cat-file <file>' to read with line numbers, and 'ollamacode write-file <file> <content>' to write code. "
+            "IMPORTANT: Use standard commands (like npm, python, git) for regular tasks. ONLY use 'ollamacode' for the Coding Tools provided above. DO NOT invent ollamacode commands. "
             "Suggest bash commands in ```bash ... ``` blocks. "
             "If you are in the middle of a task, ALWAYS suggest a command. "
             "If the task is complete, STOP."
