@@ -2,7 +2,7 @@
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
 
-## Key Features
+## Features
 
 - **Dual Provider Support**: Seamlessly switch between Groq (Cloud) and Ollama (Local) models.
 - **Autonomous Operations**: Enable auto-run and auto-fix to let the AI solve complex terminal tasks for you.
