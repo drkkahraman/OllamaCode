@@ -29,8 +29,9 @@ class OllamaCodeAgent:
             "Coding Tools: Use 'ollamacode tree' to see files, 'ollamacode cat-file <file>' to read with line numbers, and 'ollamacode write-file <file> <content>' to write code. "
             "IMPORTANT: Use standard commands (like npm, python, git) for regular tasks. ONLY use 'ollamacode' for the Coding Tools provided above. DO NOT invent ollamacode commands. "
             "Suggest bash commands in ```bash ... ``` blocks. "
-            "If you are in the middle of a task, ALWAYS suggest a command. "
-            "If the task is complete, STOP."
+            "If a command has already failed multiple times, DO NOT suggest it again. Instead, try a completely different approach or report that the task cannot be completed. "
+            "If you are in the middle of a task and have a new approach to try, suggest a command. "
+            "If the task is complete or you are stuck, STOP suggesting commands and explain the situation."
         )
         self.clip_history()
         messages = [{"role": "system", "content": system_msg}] + self.history

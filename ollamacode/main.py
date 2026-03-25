@@ -45,8 +45,16 @@ def run_agent(force_setup=False):
             
             agent.history.append({"role": "user", "content": user_input})
             recent_actions = []
+            cmd_fail_counts = {}
+            MAX_CMD_RETRIES = 2
+            MAX_TOTAL_STEPS = 20
+            total_steps = 0
             
             while True:
+                if total_steps >= MAX_TOTAL_STEPS:
+                    console.print("[bold red]Max steps reached. Stopping to prevent infinite loop.[/bold red]")
+                    break
+
                 with Progress(SpinnerColumn(), TextColumn(f"[cyan]{settings['model']} thinking...[/cyan]"), transient=True) as progress:
                     progress.add_task(""); answer = agent.ask_ai(cwd)
                 
@@ -61,19 +69,27 @@ def run_agent(force_setup=False):
                 for cmd in cmds:
                     cmd = cmd.strip()
                     if not cmd: continue
+
+                    if cmd_fail_counts.get(cmd, 0) >= MAX_CMD_RETRIES:
+                        console.print(f"[bold red]Loop detected: '{cmd}' has failed {MAX_CMD_RETRIES} times already. Stopping.[/bold red]")
+                        loop_detected = True
+                        break
+
                     console.print(Panel(f"Action:\n{cmd}", border_style="yellow"))
                     if settings["auto_run"] or Confirm.ask("Execute?"):
                         any_executed = True
+                        total_steps += 1
                         status, stdout, new_cwd = execute_command(cmd, cwd=cwd)
                         cwd = new_cwd
-                        if (cmd, stdout) in recent_actions:
-                            console.print("[red]Loop detected![/red]")
-                            loop_detected = True
-                            break
                         recent_actions.append((cmd, stdout))
                         agent.history.append({"role": "user", "content": f"Output (status {status}):\n{stdout}"})
-                        if status != 0 and settings["auto_fix"]:
-                            agent.history.append({"role": "user", "content": "Previous command failed. Fix it."}); break
+                        if status != 0:
+                            cmd_fail_counts[cmd] = cmd_fail_counts.get(cmd, 0) + 1
+                            if cmd_fail_counts[cmd] >= MAX_CMD_RETRIES:
+                                console.print(f"[bold yellow]Warning: '{cmd}' has now failed {cmd_fail_counts[cmd]} times.[/bold yellow]")
+                            if settings["auto_fix"]:
+                                agent.history.append({"role": "user", "content": f"Previous command failed (attempt {cmd_fail_counts[cmd]}/{MAX_CMD_RETRIES}). Do NOT repeat it. Try a different approach or stop."})
+                                break
                     else: break
                 if not any_executed or loop_detected: break
         except Exception:
