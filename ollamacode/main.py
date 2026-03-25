@@ -75,7 +75,7 @@ def run_agent(force_setup=False):
                         loop_detected = True
                         break
 
-                    console.print(Panel(f"Action:\n{cmd}", border_style="yellow"))
+                    console.print(Panel(f"Action: [bold yellow]{cmd}[/]\n[dim](Interactive session. You can type input or press Ctrl+C to stop)[/dim]", border_style="yellow"))
                     if settings["auto_run"] or Confirm.ask("Execute?"):
                         any_executed = True
                         total_steps += 1
