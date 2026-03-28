@@ -107,7 +107,7 @@ async function runAgent(forceSetup = false) {
 program
     .name('ollamacode')
     .description('AI-Powered Autonomous Terminal Agent')
-    .version('1.2.3');
+    .version('1.2.0');
 
 program
     .command('update')

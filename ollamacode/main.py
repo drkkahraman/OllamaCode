@@ -136,6 +136,9 @@ def main():
             if len(sys.argv) > 3: add_plugin(sys.argv[3])
             else: console.print("[red]Please specify plugin path[/red]")
             return
+        if sys.argv[1] == "--version" or sys.argv[1] == "-v":
+            console.print("[bold cyan]OllamaCode 1.2.0[/bold cyan]")
+            return
         if sys.argv[1] == "run" and len(sys.argv) > 2:
             name = sys.argv[2]
             if not name.endswith(".py") and not name.endswith(".js"):
