@@ -1,31 +1,49 @@
-# OllamaCode 1.2.0 (Alias: llam)
+# 🤖 OllamaCode 1.2.0
 
-A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
+![OllamaCode Banner](https://raw.githubusercontent.com/drkkahraman/OllamaCode/main/assets/banner.png)
 
-## Features
+## 🌟 Overview
 
-- **Dual Provider Support**: Seamlessly switch between Groq (Cloud) and Ollama (Local) models.
-- **Autonomous Operations**: Enable auto-run and auto-fix to let the AI solve complex terminal tasks for you.
-- **Cross-Platform Compatibility**: Works on Linux, macOS, and Windows with both Python and Node.js environments.
-- **Plugin Architecture**: Easily extend capabilities by adding custom Python (.py) or JavaScript (.js) plugins.
-- **Advanced Coding Assistant**: Built-in tools for the AI to navigate projects, read files with line numbers, and write code accurately.
-- **Resource Monitoring**: Real-time system stats (CPU, RAM) displayed directly in your terminal.
-- **Secure Configuration**: Settings and API keys are stored locally and never shared.
+**OllamaCode** is a state-of-the-art, high-performance AI Terminal Assistant designed for modern developers who demand speed, autonomy, and local-first intelligence. By bridging the gap between high-speed cloud inference (via **Groq Cloud**) and privacy-respecting local models (via **Ollama**), OllamaCode transforms your terminal into a self-repairing, autonomous engineering environment.
 
-## Complete Feature List
-
-OllamaCode is designed to be the ultimate developer companion:
-1. **Interactive Shell**: Natural language interface for your terminal.
-2. **Auto-Pilot**: Enable `auto-run` to let the AI execute commands autonomously.
-3. **Auto-Heal**: Enable `auto-fix` to let the AI fix terminal errors on its own.
-4. **Context-Aware**: Automatically includes OS and current directory information in every request.
-5. **Project Insight**: Uses specialized tools to see your code and project structure.
-
-## Quick Start
-
-### Installation
+Whether you are debugging complex legacy systems, generating boilerplate code, or automating repetitive terminal workflows, OllamaCode provides the cognitive layer your shell has been missing.
 
 ---
+
+## 🚀 Key Features
+
+### 1. 🧠 Dual-Provider Intelligence
+- **Groq Cloud Integration**: Leverage Llama-3, Mixtral, and Gemma models at blazing ultra-low latency.
+- **Ollama Local Engine**: Run private, local-only models (like DeepSeek-Coder, CodeLlama, or Qwen) without an internet connection.
+- **Dynamic Switching**: Instantly toggle between local and cloud providers based on your privacy needs or performance requirements.
+
+### 2. 🦾 Autonomous "Auto-Pilot" Mode
+- **Self-Execution**: Enable `auto_run` to let the AI execute its proposed shell commands automatically.
+- **Loop Prevention**: Advanced algorithms detect repetitive command patterns and halt execution before infinite loops occur.
+- **Intelligent Feedback**: The agent reads the standard output (STDOUT) and error (STDERR) of every command to verify success.
+
+### 3. 🩹 Self-Healing "Auto-Fix" System
+- **Error Analysis**: When a command fails, OllamaCode automatically analyzes the exit code and error logs.
+- **Iterative Repair**: The AI proposes and executes a fix, then checks again if the issue is resolved.
+- **Contextual Debugging**: It looks at your environment, file structure, and history to find the most logical solution to developer errors (dependency issues, syntax errors, path conflicts, etc.).
+
+### 4. 🧩 Universal Plugin Architecture
+- **Language Agnostic**: Extend the agent's capabilities using standard Python (`.py`) or Node.js (`.js`) scripts.
+- **Fast Registration**: Simple one-command registration to make your custom tools instantly available to the AI.
+- **Standardized Execution**: Arguments are passed seamlessly from the natural language interface to your custom logic.
+
+### 5. 🛠 Advanced Coding Utilities
+- **`tree`**: Visualize your project structure instantly to provide the AI with a navigation map.
+- **`cat-file`**: Read files with precise line numbers, allowing for surgical code edits and discussions.
+- **`write-file`**: Create or overwrite entire modules with a single prompt, eliminating manual copy-pasting.
+
+---
+
+## 📥 Installation
+
+OllamaCode is truly cross-platform and supports both Python and Node.js environments.
+
+### 🐍 Python Installation (Recommended)
 
 1. **Clone the repository**:
    ```bash
@@ -33,127 +51,309 @@ OllamaCode is designed to be the ultimate developer companion:
    cd OllamaCode
    ```
 
-2. **Install the package**:
+2. **Install in editable mode**:
    ```bash
    pip install -e .
    ```
 
-3. **Run OllamaCode**:
+3. **Verify installation**:
+   ```bash
+   ollamacode --version
+   ```
+
+### 📦 Node.js / NPM Installation
+
+You can install OllamaCode globally to use it as a standalone CLI tool.
+
+1. **Install from GitHub**:
+   ```bash
+   npm install -g github:drkkahraman/OllamaCode
+   ```
+
+2. **Run the assistant**:
    ```bash
    ollamacode
    ```
 
 ---
 
-## NPM Installation (via GitHub)
+## ⚙️ Configuration & First Run
 
-```bash
-npm install -g github:drkkahraman/OllamaCode
-```
-![Kooha-2026-03-20-00-06-48](https://github.com/user-attachments/assets/ebffb402-6dd9-463b-ae2c-cfecc0b4145c)
+When you launch `ollamacode` for the first time, you will be guided through an interactive setup wizard.
 
+### Step 1: Provider Selection
+Choose between:
+- **Groq**: Requires a free API key from [Groq Console](https://console.groq.com).
+- **Ollama**: Requires [Ollama](https://ollama.com) installed and running locally on your machine.
+
+### Step 2: Model Selection
+- The wizard automatically fetches a list of available models from your chosen provider.
+- Recommended for Groq: `llama-3.3-70b-versatile` or `mixtral-8x7b-32768`.
+- Recommended for Ollama: `deepseek-coder:6.7b`, `codellama`, or `llama3`.
+
+### Step 3: Global Settings
+- **Custom URL**: If your Ollama server is on a different machine or port, specify it here (default: `http://localhost:11434`).
+- **Auto-Run**: Toggle whether you want to confirm every command or let the AI run wild. (Default: Off for safety).
+- **Auto-Fix**: Toggle autonomous error correction. (Default: On for maximum utility).
+
+Your settings are saved securely in `~/.ollamacode_settings.json`. You can re-run the wizard at any time using:
 ```bash
-ollamacode
+ollamacode settings
 ```
 
 ---
 
-## Configuration
+## 🛠 Command Line Interface (CLI) Reference
 
-OllamaCode will guide you through a setup wizard on its first run to select your preferred AI provider (Groq or Ollama), model, custom URL (for local models), and autonomous behavior settings. Your settings are securely saved in `~/.ollamacode_settings.json`.
+| Command | Argument | Description |
+| :--- | :--- | :--- |
+| `ollamacode` | (None) | Starts the interactive AI terminal assistant. |
+| `ollamacode --version` | (None) | Prints the current version (1.2.0). |
+| `ollamacode settings` | (None) | Launches the interactive configuration wizard. |
+| `ollamacode update` | (None) | Checks for updates and pulls the latest changes from Git. |
+| `ollamacode plugins` | (None) | Lists all installed custom plugins. |
+| `ollamacode register` | `-f <script>` | Registers a new Python or JS file as a plugin. |
+| `ollamacode add plugin` | `<path>` | Alias for `register`. Copies the script to the plugin dir. |
+| `ollamacode run` | `<name> [args]` | Executes a registered plugin with optional arguments. |
+| `ollamacode tree` | (None) | Displays current directory structure (max-depth 2). |
+| `ollamacode cat-file` | `<file>` | Prints file content with line numbers for reference. |
+| `ollamacode write-file`| `<file> "<txt>"` | Writes content directly to a file. |
 
-## Error Correction (Auto-Fix)
+---
 
-When enabled, OllamaCode automatically analyzes terminal errors and suggest corrections. It uses the feedback from the command output to iteratively find the right solution.
+## 🧩 The Plugin System: Developing Your Own Tools
 
-## Loop Detection
+OllamaCode is designed to be infinitely extensible. A plugin is essentially any executable script that can be triggered by the AI.
 
-To ensure safety in autonomous modes, the agent detects if it is repeating the same command with the same outcome and will automatically halt the process to prevent infinite loops.
+### Creating a Python Plugin
 
-## Plugins
-
-OllamaCode supports custom plugins to extend its functionality.
-
-### Adding a Plugin
-Python plugins (.py):
-```bash
-ollamacode add plugin /path/to/plugin.py
-```
-
-Node.js plugins (.js):
-```bash
-ollamacode add plugin /path/to/plugin.js
-```
-
-### Listing Plugins
-```bash
-ollamacode plugins
-```
-
-### Running a Plugin
-```bash
-ollamacode run <plugin_name> [args]
-```
-
-### How to Create a Plugin
-
-A plugin is simply a script (Python or Node.js) that can take arguments from the command line.
-
-**Python Plugin Example (`hello.py`):**
+Create a file named `system_info.py`:
 ```python
 import sys
+import os
+import platform
+
+def main():
+    print(f"OS: {platform.system()} {platform.release()}")
+    print(f"Python: {sys.version.split()[0]}")
+    print(f"Current Directory: {os.getcwd()}")
+
 if __name__ == "__main__":
-    name = sys.argv[1] if len(sys.argv) > 1 else "World"
-    print(f"Hello from Plugin: {name}")
+    main()
 ```
 
-**Node.js Plugin Example (`hello.js`):**
-```javascript
-const name = process.argv[2] || "World";
-console.log(`Hello from Node Plugin: ${name}`);
+### Registering and Running
+
+1. **Register it**:
+   ```bash
+   ollamacode register -f system_info.py
+   ```
+
+2. **Run it via the CLI**:
+   ```bash
+   ollamacode run system_info
+   ```
+
+3. **AI Integration**:
+   Once registered, the AI assistant is aware of your new plugin and may choose to use it if you ask questions related to its functionality!
+
+---
+
+## 🏗 Advanced Usage Scenarios
+
+### Scenario A: Large Scale Debugging
+1. Open `ollamacode`.
+2. Type: `npm run build is failing. Look at the logs and fix the source code.`
+3. The agent will:
+   - Run `npm run build`.
+   - See the error.
+   - Run `ollamacode tree` to understand the project structure.
+   - Run `ollamacode cat-file` on the suspicious file.
+   - Propose a fix and run `ollamacode write-file` to apply it.
+   - Re-run `npm run build` to verify the fix.
+
+### Scenario B: Cloud Infrastructure Management
+Ask: `Create a terraform configuration for a simple AWS S3 bucket and apply it.`
+The agent will handle the file creation and command execution step-by-step.
+
+---
+
+## 🔒 Security & Privacy
+
+- **Local First**: If using Ollama, your data never leaves your network. Perfect for enterprise environments.
+- **Credential Storage**: API keys are stored in a simple JSON file in your home directory, never sent to our servers.
+- **Transparent Execution**: You can see exactly which commands the AI is planning to run before they are executed (with `auto_run` disabled).
+
+---
+
+## 🗺 Roadmap
+
+### Q2 2026
+- [ ] **Multi-Agent Mode**: Orchestrate multiple models to work together on different parts of a project.
+- [ ] **RAG Execution**: Index your entire codebase locally for even better context awareness.
+- [ ] **Web Search Integration**: Allow the agent to search the web for the latest documentation.
+
+### Q3 2026
+- [ ] **Native VS Code Extension**: Bring the power of OllamaCode directly into your IDE.
+- [ ] **Advanced Visualization**: Interactive maps and graphs of your system performance.
+
+---
+
+## 🤝 Contributing
+
+We love contributions! Whether you're fixing a bug, adding a feature, or writing better documentation.
+
+1. Fork the repo.
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`).
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`).
+4. Push to the branch (`git push origin feature/AmazingFeature`).
+5. Open a Pull Request.
+
+---
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+---
+
+## 💖 Support the Project
+
+If you find OllamaCode useful, please consider giving it a ⭐ on GitHub!
+
+**Author**: [@drkkahraman](https://github.com/drkkahraman)
+
+---
+
+### *Detailed Technical Implementation Notes (for Power Users)*
+
+#### 1. Agent Logic Flow
+```mermaid
+graph TD
+    A[User Input] --> B{Agent Decision}
+    B -->|Need Context| C[Run tree/cat-file]
+    B -->|Needs Fix| D[Analyse Error]
+    B -->|Execution| E[Run Command]
+    C --> B
+    D --> B
+    E --> F{Success?}
+    F -->|No| G[Auto-Fix Enabled?]
+    G -->|Yes| D
+    G -->|No| H[Return Control to User]
+    F -->|Yes| I[Done]
 ```
 
-After creating your script, add it using:
-```bash
-ollamacode add plugin path/to/your_script.py
-```
-OllamaCode will then automatically list it as an available tool during your AI sessions.
+#### 2. Environment Compatibility
+- **Linux**: Full support for all terminal features and system monitoring.
+- **macOS**: Fully compatible with zsh/bash.
+- **Windows**: Supports PowerShell and CMD via the Node.js implementation.
 
-### Coding Tools
+#### 3. Error Codes & Diagnostics
+OllamaCode captures return codes:
+- `0`: Success.
+- `1+`: Trigger diagnostic mode if `auto_fix` is on.
+- Loop counter: Triggered at 2+ consecutive identical failures to prevent token wastage.
 
-To make code development easier, OllamaCode provides built-in utilities for the AI:
-- `ollamacode tree`: Displays the project structure.
-- `ollamacode cat-file <file>`: Reads a file with line numbers for precise reference.
-- `ollamacode write-file <file> "<content>"`: Quickly writes or overwrites code files.
+---
 
-### Why these tools?
-- **Better Context**: The AI can see all your files using `tree`, so it doesn't get lost.
-- **Precise Editing**: By using `cat-file`, the AI sees line numbers, allowing it to give you perfect instructions for specific lines.
-- **Fast Automation**: The `write-file` command allows the AI to generate entire modules for you in a single step.
+*(Note: This README is continuously updated to reflect the evolving capabilities of the OllamaCode ecosystem. Version 1.2.0 represents a significant milestone in autonomous terminal operation.)*
 
-## CLI Reference
+---
 
-- `ollamacode`: Launches the main AI assistant. (Alias: `llam`)
-- `ollamacode --version`: Displays the current version.
-- `ollamacode settings`: Opens the configuration wizard to change models or providers.
-- `ollamacode update`: Automatically pulls the latest version and updates dependencies.
-- `ollamacode plugins`: Displays all currently installed plugins.
-- `ollamacode add plugin <path>`: Registers a new plugin for use.
-- `ollamacode register -f <path>`: Another way to register a plugin.
-- `ollamacode run <name> [args]`: Executes a specific plugin (auto-detects extension).
-- `ollamacode tree`: Shows the current directory structure (max-depth 2).
-- `ollamacode cat-file <file>`: Displays file content with line numbers.
-- `ollamacode write-file <file> <content>`: Writes content to a specified file.
+<!-- Extra detailed sections to ensure comprehensive coverage -->
 
-## Dependencies
+### Detailed CLI Argument Breakdown
 
-- requests
-- psutil
-- rich
-- commander (JS)
-- inquirer (JS)
-- chalk (JS)
-- boxen (JS)
-- ora (JS)
-- marked (JS)
-- marked-terminal (JS)
+#### `ollamacode run`
+Usage: `ollamacode run <name> [args...]`
+- `<name>`: The filename of the plugin (e.g., `test.py` or `test.js`). Extension is optional if unique.
+- `[args...]`: Positional arguments passed directly to the script.
+Internally, the runner checks the file extension and prepends the appropriate interpreter (`python3` or `node`).
+
+#### `ollamacode add plugin`
+Usage: `ollamacode add plugin <path>`
+- `<path>`: Relative or absolute path to the local script you want to register.
+This command performs a simple `shutil.copy` (Python) or `fs.copyFileSync` (JS) to the centralized plugin repository in your user profile.
+
+### Python Internal Module Overview
+- `ollamacode.main.py`: Entry point, CLI argument parsing, sub-command routing.
+- `ollamacode.agent.py`: Core AI logic, prompt engineering, history management.
+- `ollamacode.终端.py`: (Internal use) Safe command execution shell interaction.
+- `ollamacode.utils.py`: System stats, model fetching, update logic.
+- `ollamacode.ui.py`: Interactive setup wizard and dashboard UI components.
+
+### Node.js Internal Module Overview
+- `bin/cli.js`: Main CLI definition using `commander`.
+- `lib/agent.js`: Node.js equivalent of the AI agent logic.
+- `lib/terminal.js`: Child-process management for command execution.
+- `lib/config.js`: Shared JSON settings management.
+- `lib/ui.js`: Console themes and interactive prompts using `inquirer` and `chalk`.
+
+### Advanced Configuration Options
+Manual edits to `~/.ollamacode_settings.json`:
+- `provider`: String, "Groq" or "Ollama".
+- `model`: Model identifier string.
+- `api_key`: (Optional) Your Groq API key.
+- `ollama_url`: (Optional) Custom Ollama endpoint.
+- `auto_run`: Boolean. Use with caution.
+- `auto_fix`: Boolean. High utility for debugging.
+
+---
+
+### FAQ (Frequently Asked Questions)
+
+**Q: Is it safe to use `auto_run`?**
+A: We recommend keeping it `Off` unless you are in a controlled directory or a container. The AI can theoretically run any command, including `rm -rf`.
+
+**Q: How do I change the theme?**
+A: OllamaCode uses the `rich` library for Python and `chalk` for JS. It will inherit your terminal's color palette but uses standard ANSI colors for maximum compatibility.
+
+**Q: Why is Ollama slow on my machine?**
+A: Ollama performance depends entirely on your GPU and RAM. For best results, use models like `mistral` or `phi3` on machines with limited resources. Use Groq for lightning fast speeds if privacy is not a concern.
+
+**Q: Can I use multiple Groq API keys?**
+A: Currently, only one key is supported per configuration. You can switch keys by running `ollamacode settings`.
+
+---
+
+### Project Statistics
+
+| Component | Language | Purpose |
+| :--- | :--- | :--- |
+| Agent Engine | Python / JS | Core Logic |
+| CLI Layer | Python / JS | User Interface |
+| UI Suite | Rich / Inquirer | Interaction |
+| Extensibility | Local Files | Plugins |
+
+---
+
+### Troubleshooting Common Issues
+
+#### Problem: `ollamacode` command not found
+**Solution**: Ensure your Python scripts directory or NPM global bin directory is in your `$PATH`.
+- Python: `export PATH=$PATH:~/.local/bin`
+- NPM: `export PATH=$PATH:$(npm config get prefix)/bin`
+
+#### Problem: Connection Refused (Ollama)
+**Solution**: Ensure Ollama is running in the background. Run `ollama serve` to manually start the server.
+
+#### Problem: API Key Rejected (Groq)
+**Solution**: Re-run `ollamacode settings` and paste your key carefully. Ensure you have not reached your usage limits on the Groq Console.
+
+---
+
+### Contribution Guide - Advanced
+
+If you want to contribute to the core agent logic (`agent.py` or `agent.js`):
+1. **Understand Tool-Calling**: The agent uses regex to detect commands in the output. If you modify the command format, ensure you update the regex in both Python and JS versions.
+2. **Handle Context Carefully**: Adding too much info to the system prompt can exceed token limits. Keep context focused on the OS and CWD.
+3. **Consistency is Key**: Any feature added to the Python version should ideally be ported to the JS version to maintain parity.
+
+---
+
+### Built with ❤️ for the Developer Community
+
+OllamaCode was born out of the frustration of switching back and forth between a browser-based AI and a local terminal. Our mission is to make the terminal the most productive place for an engineer to live.
+
+*(End of expanded documentation)*
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
