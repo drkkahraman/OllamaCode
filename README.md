@@ -8,7 +8,54 @@ Whether you are debugging complex legacy systems, generating boilerplate code, o
 
 ---
 
-## Key Features
+## Competitive Analysis: OllamaCode vs. The Market
+
+In the rapidly evolving landscape of AI-powered developer tools, OllamaCode occupies a unique niche by prioritizing high-speed inference and local autonomy. Below is a detailed comparison with other major players in the field.
+
+### Comparison Table
+
+| Feature | OllamaCode | Aider | OpenDevin | Copilot CLI |
+| :--- | :--- | :--- | :--- | :--- |
+| **Primary Interface** | Terminal (CLI) | Terminal (CLI) | Web-based / IDE | Terminal (CLI) |
+| **Local Model Support** | Native (Ollama) | Via LiteLLM | Native (Docker) | None |
+| **Inference Speed** | Extreme (Groq) | Standard (API) | Standard (API) | Standard (API) |
+| **Autonomous Operation**| Built-in (Auto-Fix) | Limited | Full (Agentic) | Minimal |
+| **Plugin System** | Native (Python/JS) | Minimal | Extensive | None |
+| **Resource Monitoring**| Built-in | None | Minimal | None |
+| **Privacy Focus** | Local-First | Hybrid | Hybrid | Cloud-Only |
+
+### OllamaCode vs. Aider
+Aider is a powerful tool for pair programming, but it often requires complex configuration to use local models via LiteLLM. OllamaCode provides a direct, zero-config integration with Ollama, making it the superior choice for developers who prioritize local-only data processing without the overhead of additional proxies.
+
+### OllamaCode vs. OpenDevin
+OpenDevin is a full agentic system that usually runs inside Docker containers. While highly capable, it is often "too heavy" for quick terminal tasks. OllamaCode provides a lightweight, "instant-on" experience that integrates directly with your existing shell environment without the need for containerization or complex virtual networking.
+
+### OllamaCode vs. GitHub Copilot CLI
+Copilot CLI is primarily a tool for suggesting shell commands based on natural language. It lacks the ability to read your project structure, analyze system resource usage, or autonomously fix errors through iterative loops. OllamaCode is a full-fledged agent capable of complex reasoning, not just command suggestion.
+
+---
+
+## Technical Architecture
+
+OllamaCode is built on a modular, dual-stack architecture that ensures consistency across Python and Node.js environments.
+
+### Core Components
+
+1. **The Intelligence Router**: 
+   This module handles the logic for switching between Groq and Ollama. It manages the formatting of prompts and ensures that the agent follows the system instructions regardless of the model size or provider.
+
+2. **The Execution Engine (Terminal Wrapper)**:
+   A secure layer that executes shell commands. It captures STDOUT and STDERR independently, monitors execution time, and passes results back to the agent for analysis.
+
+3. **Context Management System**:
+   Dynamically injects system information (OS version, CPU usage, RAM availability) and project context (file tree, current file content) into each request to ensure the AI has situational awareness.
+
+4. **Self-Healing Loop**:
+   A deterministic state machine that triggers when a command returns a non-zero exit code. It guides the AI to analyze the error and propose a surgical fix rather than a broad, destructive change.
+
+---
+
+## Key Features in Detail
 
 ### 1. Dual-Provider Intelligence
 - Groq Cloud Integration: Leverage Llama-3, Mixtral, and Gemma models at blazing ultra-low latency.
@@ -37,7 +84,7 @@ Whether you are debugging complex legacy systems, generating boilerplate code, o
 
 ---
 
-## Installation
+## Installation Guide
 
 OllamaCode is truly cross-platform and supports both Python and Node.js environments.
 
@@ -157,30 +204,34 @@ if __name__ == "__main__":
 
 ---
 
-## Advanced Usage Scenarios
+## Security & Enterprise Features
 
-### Scenario A: Large Scale Debugging
-1. Open ollamacode.
-2. Type: npm run build is failing. Look at the logs and fix the source code.
-3. The agent will:
-   - Run npm run build.
-   - See the error.
-   - Run ollamacode tree to understand the project structure.
-   - Run ollamacode cat-file on the suspicious file.
-   - Propose a fix and run ollamacode write-file to apply it.
-   - Re-run npm run build to verify the fix.
+OllamaCode is built with a security-first mindset, focusing on local data integrity and transparent operations.
 
-### Scenario B: Cloud Infrastructure Management
-Ask: Create a terraform configuration for a simple AWS S3 bucket and apply it.
-The agent will handle the file creation and command execution step-by-step.
+### Air-Gapped Environments
+For enterprises working with sensitive proprietary code, OllamaCode can be used in fully air-gapped environments by utilizing the Ollama local provider. No telemetry is sent, and all interactions remain within the corporate firewall.
+
+### Permission Control
+Unlike some agents that run in the background with unrestricted root access, OllamaCode operates within your current user privileges. Every command is logged, and (unless auto_run is enabled) every action requires explicit human confirmation.
+
+### Credential Handling
+Sensitive API keys (like Groq keys) are stored locally and are never embedded in logs or shared across the network. The configuration file is kept in the user's home directory with restrictive permissions.
 
 ---
 
-## Security & Privacy
+## FAQ (Frequently Asked Questions)
 
-- Local First: If using Ollama, your data never leaves your network. Perfect for enterprise environments.
-- Credential Storage: API keys are stored in a simple JSON file in your home directory, never sent to our servers.
-- Transparent Execution: You can see exactly which commands the AI is planning to run before they are executed (with auto_run disabled).
+**Q: Is it safe to use auto_run?**
+A: We recommend keeping it Off unless you are in a controlled directory or a container. The AI can theoretically run any command, including rm -rf.
+
+**Q: How do I change the theme?**
+A: OllamaCode uses the rich library for Python and chalk for JS. It will inherit your terminal's color palette but uses standard ANSI colors for maximum compatibility.
+
+**Q: Why is Ollama slow on my machine?**
+A: Ollama performance depends entirely on your GPU and RAM. For best results, use models like mistral or phi3 on machines with limited resources. Use Groq for lightning fast speeds if privacy is not a concern.
+
+**Q: Can I use multiple Groq API keys?**
+A: Currently, only one key is supported per configuration. You can switch keys by running ollamacode settings.
 
 ---
 
@@ -223,127 +274,26 @@ Author: [@drkkahraman](https://github.com/drkkahraman)
 
 ---
 
-### Detailed Technical Implementation Notes (for Power Users)
-
-#### 1. Agent Logic Flow
-```mermaid
-graph TD
-    A[User Input] --> B{Agent Decision}
-    B -->|Need Context| C[Run tree/cat-file]
-    B -->|Needs Fix| D[Analyse Error]
-    B -->|Execution| E[Run Command]
-    C --> B
-    D --> B
-    E --> F{Success?}
-    F -->|No| G[Auto-Fix Enabled?]
-    G -->|Yes| D
-    G -->|No| H[Return Control to User]
-    F -->|Yes| I[Done]
-```
-
-#### 2. Environment Compatibility
-- Linux: Full support for all terminal features and system monitoring.
-- macOS: Fully compatible with zsh/bash.
-- Windows: Supports PowerShell and CMD via the Node.js implementation.
-
-#### 3. Error Codes & Diagnostics
-OllamaCode captures return codes:
-- 0: Success.
-- 1+: Trigger diagnostic mode if auto_fix is on.
-- Loop counter: Triggered at 2+ consecutive identical failures to prevent token wastage.
-
----
-
-*(Note: This README is continuously updated to reflect the evolving capabilities of the OllamaCode ecosystem. Version 1.2.0 represents a significant milestone in autonomous terminal operation.)*
-
----
-
-### Detailed CLI Argument Breakdown
+### Extended CLI Argument Breakdown and Use Cases
 
 #### ollamacode run
-Usage: ollamacode run <name> [args...]
-- <name>: The filename of the plugin (e.g., test.py or test.js). Extension is optional if unique.
-- [args...]: Positional arguments passed directly to the script.
-Internally, the runner checks the file extension and prepends the appropriate interpreter (python3 or node).
+The `run` command is a powerful abstraction that allows the AI to perform complex tasks by leveraging previously written scripts. 
+Case Sample: You have a script that tests database connectivity. By registering it as a plugin, the AI can independently verify if a bug is caused by environmental issues or code logic.
 
-#### ollamacode add plugin
-Usage: ollamacode add plugin <path>
-- <path>: Relative or absolute path to the local script you want to register.
-This command performs a simple shutil.copy (Python) or fs.copyFileSync (JS) to the centralized plugin repository in your user profile.
-
-### Python Internal Module Overview
-- ollamacode.main.py: Entry point, CLI argument parsing, sub-command routing.
-- ollamacode.agent.py: Core AI logic, prompt engineering, history management.
-- ollamacode.terminal.py: (Internal use) Safe command execution shell interaction.
-- ollamacode.utils.py: System stats, model fetching, update logic.
-- ollamacode.ui.py: Interactive setup wizard and dashboard UI components.
-
-### Node.js Internal Module Overview
-- bin/cli.js: Main CLI definition using commander.
-- lib/agent.js: Node.js equivalent of the AI agent logic.
-- lib/terminal.js: Child-process management for command execution.
-- lib/config.js: Shared JSON settings management.
-- lib/ui.js: Console themes and interactive prompts using inquirer and chalk.
-
-### Advanced Configuration Options
-Manual edits to ~/.ollamacode_settings.json:
-- provider: String, "Groq" or "Ollama".
-- model: Model identifier string.
-- api_key: (Optional) Your Groq API key.
-- ollama_url: (Optional) Custom Ollama endpoint.
-- auto_run: Boolean. Use with caution.
-- auto_fix: Boolean. High utility for debugging.
+#### ollamacode write-file
+Unlike standard pipe operators, `write-file` ensures that formatting is preserved and handles internal white-space issues that often plague AI-generated code snippets in standard terminal environments.
 
 ---
 
-### FAQ (Frequently Asked Questions)
+### troubleshooting Common Issues - Advanced
 
-**Q: Is it safe to use auto_run?**
-A: We recommend keeping it Off unless you are in a controlled directory or a container. The AI can theoretically run any command, including rm -rf.
+#### Issue: Inconsistent Agent Responses
+**Cause**: Small models (like llama3-8b) may struggle with long context windows.
+**Solution**: Try using a larger model on Groq (like 70b) or reduce the number of files in your directory before running `ollamacode tree`.
 
-**Q: How do I change the theme?**
-A: OllamaCode uses the rich library for Python and chalk for JS. It will inherit your terminal's color palette but uses standard ANSI colors for maximum compatibility.
-
-**Q: Why is Ollama slow on my machine?**
-A: Ollama performance depends entirely on your GPU and RAM. For best results, use models like mistral or phi3 on machines with limited resources. Use Groq for lightning fast speeds if privacy is not a concern.
-
-**Q: Can I use multiple Groq API keys?**
-A: Currently, only one key is supported per configuration. You can switch keys by running ollamacode settings.
-
----
-
-### Project Statistics
-
-| Component | Language | Purpose |
-| :--- | :--- | :--- |
-| Agent Engine | Python / JS | Core Logic |
-| CLI Layer | Python / JS | User Interface |
-| UI Suite | Rich / Inquirer | Interaction |
-| Extensibility | Local Files | Plugins |
-
----
-
-### Troubleshooting Common Issues
-
-#### Problem: ollamacode command not found
-**Solution**: Ensure your Python scripts directory or NPM global bin directory is in your $PATH.
-- Python: export PATH=$PATH:~/.local/bin
-- NPM: export PATH=$PATH:$(npm config get prefix)/bin
-
-#### Problem: Connection Refused (Ollama)
-**Solution**: Ensure Ollama is running in the background. Run ollama serve to manually start the server.
-
-#### Problem: API Key Rejected (Groq)
-**Solution**: Re-run ollamacode settings and paste your key carefully. Ensure you have not reached your usage limits on the Groq Console.
-
----
-
-### Contribution Guide - Advanced
-
-If you want to contribute to the core agent logic (agent.py or agent.js):
-1. Understand Tool-Calling: The agent uses regex to detect commands in the output. If you modify the command format, ensure you update the regex in both Python and JS versions.
-2. Handle Context Carefully: Adding too much info to the system prompt can exceed token limits. Keep context focused on the OS and CWD.
-3. Consistency is Key: Any feature added to the Python version should ideally be ported to the JS version to maintain parity.
+#### Issue: High RAM Usage
+**Cause**: Local models can consume significant system resources.
+**Solution**: Use quantized versions of models (e.g., GGUF format with 4-bit quantization) in Ollama to significantly reduce the memory footprint.
 
 ---
 
@@ -352,4 +302,5 @@ If you want to contribute to the core agent logic (agent.py or agent.js):
 OllamaCode was born out of the frustration of switching back and forth between a browser-based AI and a local terminal. Our mission is to make the terminal the most productive place for an engineer to live.
 
 *(End of expanded documentation)*
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
