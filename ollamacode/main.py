@@ -137,7 +137,21 @@ def main():
             else: console.print("[red]Please specify plugin path[/red]")
             return
         if sys.argv[1] == "run" and len(sys.argv) > 2:
-            run_plugin(sys.argv[2], sys.argv[3:])
+            name = sys.argv[2]
+            if not name.endswith(".py") and not name.endswith(".js"):
+                # try finding it with .py first
+                plugin_dir = os.path.join(os.path.expanduser("~"), ".ollamacode", "plugins")
+                if os.path.exists(os.path.join(plugin_dir, name + ".py")): name += ".py"
+                elif os.path.exists(os.path.join(plugin_dir, name + ".js")): name += ".js"
+            run_plugin(name, sys.argv[3:])
+            return
+        if sys.argv[1] == "register":
+            # llam register -n my_plugin -f test_plugin.py
+            filename = None
+            for i in range(len(sys.argv)):
+                if sys.argv[i] == "-f" and i+1 < len(sys.argv): filename = sys.argv[i+1]
+            if filename: add_plugin(filename)
+            else: console.print("[red]Please specify plugin file with -f[/red]")
             return
         if sys.argv[1] == "tree":
             subprocess.run(["find", ".", "-maxdepth", "2", "-not", "-path", "*/.*"])

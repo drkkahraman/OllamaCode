@@ -1,4 +1,4 @@
-# OllamaCode 1.1.9
+# OllamaCode 1.1.9 (Alias: llam)
 
 A high performance AI Terminal Assistant that connects to Groq Cloud and Ollama Local to help you execute shell commands, analyze your system, and automate tasks.
 
@@ -133,12 +133,13 @@ To make code development easier, OllamaCode provides built-in utilities for the 
 
 ## CLI Reference
 
-- `ollamacode`: Launches the main AI assistant.
+- `ollamacode`: Launches the main AI assistant. (Alias: `llam`)
 - `ollamacode settings`: Opens the configuration wizard to change models or providers.
 - `ollamacode update`: Automatically pulls the latest version and updates dependencies.
 - `ollamacode plugins`: Displays all currently installed plugins.
 - `ollamacode add plugin <path>`: Registers a new plugin for use.
-- `ollamacode run <name> [args]`: Executes a specific plugin.
+- `ollamacode register -f <path>`: Another way to register a plugin.
+- `ollamacode run <name> [args]`: Executes a specific plugin (auto-detects extension).
 - `ollamacode tree`: Shows the current directory structure (max-depth 2).
 - `ollamacode cat-file <file>`: Displays file content with line numbers.
 - `ollamacode write-file <file> <content>`: Writes content to a specified file.

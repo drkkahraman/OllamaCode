@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="ollamacode",
-    version="1.1.7",
+    version="1.1.9",
     packages=find_packages(),
     install_requires=[
         "requests",
@@ -12,6 +12,7 @@ setup(
     entry_points={
         "console_scripts": [
             "ollamacode=ollamacode.main:main",
+            "llam=ollamacode.main:main",
         ],
     },
     author="drkkahraman",
