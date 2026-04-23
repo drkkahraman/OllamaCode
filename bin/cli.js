@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 import { Command } from 'commander';
 import chalk from 'chalk';
-import boxen from 'boxen';
 import inquirer from 'inquirer';
 import ora from 'ora';
 import { marked } from 'marked';
@@ -18,7 +17,7 @@ const program = new Command();
 
 async function runAgent(forceSetup = false) {
     let settings = loadSettings();
-    if (forceSetup || !settings.api_key && settings.provider === 'Groq') {
+    if (forceSetup || (!settings.api_key && settings.provider === 'Groq')) {
         settings = await setupWizard(settings);
         saveSettings(settings);
     }
@@ -35,12 +34,16 @@ async function runAgent(forceSetup = false) {
             const { user_input } = await inquirer.prompt([{
                 type: 'input',
                 name: 'user_input',
-                message: chalk.bold.green('OllamaCode >')
+                message: chalk.magenta('OllamaCode') + chalk.dim(' >')
             }]);
 
-            if (['q', 'exit', 'quit'].includes(user_input.toLowerCase())) break;
+            if (['q', 'exit', 'quit'].includes(user_input.toLowerCase())) {
+                console.log(chalk.dim('\n👋 Goodbye!\n'));
+                break;
+            }
             if (user_input.toLowerCase() === 'clear') {
                 console.clear();
+                showStatus(settings);
                 agent.history = [];
                 continue;
             }
@@ -49,11 +52,14 @@ async function runAgent(forceSetup = false) {
             let recentActions = [];
 
             while (true) {
-                const spinner = ora(`${chalk.cyan(settings.model)} thinking...`).start();
+                const spinner = ora({
+                    text: `${chalk.dim(settings.model)} thinking...`,
+                    color: 'cyan'
+                }).start();
                 const answer = await agent.askAi(cwd);
                 spinner.stop();
 
-                console.log(boxen(marked(answer), { title: '🤖 OllamaCode', borderColor: 'cyan', padding: 1 }));
+                console.log(`\n${chalk.magenta('OllamaCode')}\n${marked(answer)}`);
                 agent.history.push({ role: "assistant", content: answer });
 
                 const cmds = agent.getCommands(answer);
@@ -61,14 +67,14 @@ async function runAgent(forceSetup = false) {
 
                 let anyExecuted = false;
                 for (const cmd of cmds) {
-                    console.log(boxen(`Action:\n${chalk.yellow(cmd)}`, { borderStyle: 'single', borderColor: 'yellow' }));
+                    console.log(`  ${chalk.magenta('●')} ${chalk.bold.white(cmd)}`);
                     
                     let execute = settings.auto_run;
                     if (!execute) {
                         const { confirm } = await inquirer.prompt([{
                             type: 'confirm',
                             name: 'confirm',
-                            message: 'Execute?',
+                            message: chalk.dim('  Execute?'),
                             default: true
                         }]);
                         execute = confirm;
@@ -76,11 +82,15 @@ async function runAgent(forceSetup = false) {
 
                     if (execute) {
                         anyExecuted = true;
-                        const result = executeCommand(cmd, cwd);
+                        const result = await executeCommand(cmd, cwd);
                         cwd = result.newCwd;
                         
+                        if (result.stdout) {
+                            console.log(chalk.dim(result.stdout.split('\n').map(l => `    ${l}`).join('\n')));
+                        }
+
                         if (recentActions.some(a => a.cmd === cmd && a.stdout === result.stdout)) {
-                            console.log(chalk.red('Loop detected!'));
+                            console.log(`  ${chalk.red('⚠ Loop detected! Skipping iterative fix.')}`);
                             break;
                         }
                         
@@ -88,6 +98,7 @@ async function runAgent(forceSetup = false) {
                         agent.history.push({ role: "user", content: `Output (status ${result.status}):\n${result.stdout}` });
 
                         if (result.status !== 0 && settings.auto_fix) {
+                            console.log(`  ${chalk.red('✖ Failed (code ' + result.status + '). Asking for fix...')}`);
                             agent.history.push({ role: "user", content: "Previous command failed. Fix it." });
                             break;
                         }
@@ -98,113 +109,13 @@ async function runAgent(forceSetup = false) {
                 if (!anyExecuted) break;
             }
         } catch (e) {
-            console.error(chalk.bold.red('Fatal Error:'), e.stack);
+            console.error(`\n${chalk.bold.red('Error:')} ${e.message}\n`);
             break;
         }
     }
 }
 
-program
-    .name('ollamacode')
-    .description('AI-Powered Autonomous Terminal Agent')
-    .version('1.2.0');
-
-program
-    .command('update')
-    .action(async () => {
-        const { local, remote, error } = await checkUpdate(process.cwd());
-        if (error) { console.error(chalk.red(error)); return; }
-        if (local === remote) { console.log(chalk.green('Already up to date.')); return; }
-        console.log(chalk.yellow('Update available. Run git pull.'));
-    });
-
-program
-    .command('plugins')
-    .action(async () => {
-        const os = await import('os');
-        const fs = await import('fs');
-        const path = await import('path');
-        const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
-        if (!fs.existsSync(pluginDir)) fs.mkdirSync(pluginDir, { recursive: true });
-        const plugins = fs.readdirSync(pluginDir).filter(f => f.endsWith('.js'));
-        console.log(boxen(plugins.join('\n') || 'No plugins found', { title: 'Plugins', borderColor: 'blue', padding: 1 }));
-    });
-
-program
-    .command('add <type> [path]')
-    .action(async (type, pluginPath) => {
-        if (type === 'plugin') {
-            const os = await import('os');
-            const fs = await import('fs');
-            const path = await import('path');
-            if (!pluginPath || !fs.existsSync(pluginPath)) { console.log(chalk.red('File not found')); return; }
-            const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
-            if (!fs.existsSync(pluginDir)) fs.mkdirSync(pluginDir, { recursive: true });
-            fs.copyFileSync(pluginPath, path.join(pluginDir, path.basename(pluginPath)));
-            console.log(chalk.green(`Added plugin: ${path.basename(pluginPath)}`));
-        }
-    });
-
-program
-    .command('run <name> [args...]')
-    .action(async (name, args) => {
-        const os = await import('os');
-        const fs = await import('fs');
-        const path = await import('path');
-        const { spawn } = await import('child_process');
-        const pluginDir = path.join(os.homedir(), '.ollamacode', 'plugins');
-        const pluginPath = path.join(pluginDir, name);
-        if (!fs.existsSync(pluginPath)) { console.log(chalk.red(`Plugin ${name} not found`)); return; }
-
-        let cmd = pluginPath;
-        let finalArgs = args;
-        if (name.endsWith('.py')) { cmd = 'python3'; finalArgs = [pluginPath, ...args]; }
-        if (name.endsWith('.js')) { cmd = 'node'; finalArgs = [pluginPath, ...args]; }
-
-        spawn(cmd, finalArgs, { stdio: 'inherit', shell: true });
-    });
-
-program
-    .command('tree')
-    .action(async () => {
-        const { execSync } = await import('child_process');
-        try {
-            console.log(execSync('find . -maxdepth 2 -not -path "*/.*"').toString());
-        } catch (e) { console.error(e.message); }
-    });
-
-program
-    .command('cat-file <file>')
-    .action(async (file) => {
-        const fs = await import('fs');
-        try {
-            const content = fs.readFileSync(file, 'utf8');
-            content.split('\n').forEach((line, i) => {
-                console.log(`${chalk.dim((i + 1).toString().padStart(3, ' '))} : ${line}`);
-            });
-        } catch (e) { console.error(chalk.red(e.message)); }
-    });
-
-program
-    .command('write-file <file> [content]')
-    .action(async (file, content) => {
-        const fs = await import('fs');
-        let data = content || "";
-        if (!content) {
-            // Read from stdin if no content provided
-            data = fs.readFileSync(0, 'utf-8');
-        }
-        try {
-            fs.writeFileSync(file, data);
-            console.log(chalk.green(`Written to ${file}`));
-        } catch (e) { console.error(chalk.red(e.message)); }
-    });
-
-program
-    .command('settings')
-    .action(() => runAgent(true));
-
-program
-    .action(() => runAgent());
-
+program.name('ollamacode').description('AI-Powered Autonomous Terminal Agent').version('1.2.2');
+program.command('settings').action(() => runAgent(true));
+program.action(() => runAgent());
 program.parse();

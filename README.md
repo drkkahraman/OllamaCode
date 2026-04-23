@@ -1,4 +1,4 @@
-# OllamaCode 1.2.1
+# OllamaCode 1.2.2
 (By TCYZ)
 
 ## Overview
@@ -154,7 +154,7 @@ ollamacode settings
 | Command | Argument | Description |
 | :--- | :--- | :--- |
 | ollamacode | (None) | Starts the interactive AI terminal assistant. |
-| ollamacode --version | (None) | Prints the current version (1.2.0). |
+| ollamacode --version | (None) | Prints the current version (1.2.2). |
 | ollamacode settings | (None) | Launches the interactive configuration wizard. |
 | ollamacode update | (None) | Checks for updates and pulls the latest changes from Git. |
 | ollamacode plugins | (None) | Lists all installed custom plugins. |

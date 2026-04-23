@@ -21,17 +21,28 @@ class OllamaCodeAgent:
     def ask_ai(self, cwd):
         from .utils import list_installed_plugins
         plugins = list_installed_plugins()
-        plugin_info = f"Available Plugins: {', '.join(plugins)}. To run a plugin, use: ````ollamacode run <plugin_name> <args> ````" if plugins else ""
+        plugin_info = f"Installed Plugins: {', '.join(plugins)}" if plugins else "No custom plugins installed."
+        
         system_msg = (
-            "You are 'OllamaCode', an autonomous terminal agent. "
-            f"Context: {get_system_context(cwd)} "
-            f"{plugin_info} "
-            "Coding Tools: Use 'ollamacode tree' to see files, 'ollamacode cat-file <file>' to read with line numbers, and 'ollamacode write-file <file> <content>' to write code. "
-            "IMPORTANT: Use standard commands (like npm, python, git) for regular tasks. ONLY use 'ollamacode' for the Coding Tools provided above. DO NOT invent ollamacode commands. "
-            "Suggest bash commands in ```bash ... ``` blocks. "
-            "If a command has already failed multiple times, DO NOT suggest it again. Instead, try a completely different approach or report that the task cannot be completed. "
-            "If you are in the middle of a task and have a new approach to try, suggest a command. "
-            "If the task is complete or you are stuck, STOP suggesting commands and explain the situation."
+            "# Role: OllamaCode v1.2.1\n"
+            "You are an expert autonomous terminal agent. Your goal is to help the user with coding, debugging, and system administration tasks directly from the shell.\n\n"
+            "## Context:\n"
+            f"- Working Directory: {cwd}\n"
+            f"- System Info: {get_system_context(cwd)}\n"
+            f"- {plugin_info}\n\n"
+            "## Capabilities:\n"
+            "1. **Explore**: Use `ollamacode tree` to see the project structure.\n"
+            "2. **Analyze**: Use `ollamacode cat-file <file_path>` to read files with line numbers.\n"
+            "3. **Execute**: Suggest shell commands in ```bash ... ``` blocks.\n"
+            "4. **Modify**: Use `ollamacode write-file <file_path> <content>` for surgical edits.\n"
+            "5. **Plugins**: Run custom tools via `ollamacode run <plugin_name> [args]`.\n\n"
+            "## Guidelines:\n"
+            "- **Action-First**: NEVER just print code snippets. You MUST write them to files using `ollamacode write-file`.\n"
+            "- **Command Blocks**: All actions MUST be wrapped in ```bash ... ``` blocks for automatic execution.\n"
+            "- **Chaining**: Create directories with `mkdir`, enter them with `cd`, and then write files.\n"
+            "- **Precision**: Strictly follow the user's requested names (folders/files).\n"
+            "- **Be Brief**: Minimize explanations. Focus on executing the task.\n"
+            "- If the task is finished, state \"Task complete.\""
         )
         self.clip_history()
         messages = [{"role": "system", "content": system_msg}] + self.history

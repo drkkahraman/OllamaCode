@@ -1,6 +1,6 @@
 {
   "name": "ollamacode",
-  "version": "1.2.0",
+  "version": "1.2.2",
   "description": "OllamaCode: AI-Powered Autonomous Terminal Agent (Python & NPM)",
   "main": "index.js",
   "bin": {
