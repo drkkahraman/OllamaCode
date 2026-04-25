@@ -285,15 +285,3 @@ Case Sample: You have a script that tests database connectivity. By registering 
 Unlike standard pipe operators, `write-file` ensures that formatting is preserved and handles internal white-space issues that often plague AI-generated code snippets in standard terminal environments.
 
 ---
-
-### troubleshooting Common Issues - Advanced
-
-#### Issue: Inconsistent Agent Responses
-**Cause**: Small models (like llama3-8b) may struggle with long context windows.
-**Solution**: Try using a larger model on Groq (like 70b) or reduce the number of files in your directory before running `ollamacode tree`.
-
-#### Issue: High RAM Usage
-**Cause**: Local models can consume significant system resources.
-**Solution**: Use quantized versions of models (e.g., GGUF format with 4-bit quantization) in Ollama to significantly reduce the memory footprint.
-
----
