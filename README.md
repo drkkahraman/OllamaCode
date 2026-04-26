@@ -3,17 +3,17 @@
 
 ## Overview
 
-OllamaCode is a high-performance AI Terminal Assistant designed for modern developers who demand speed, autonomy, and local-first intelligence. By bridging the gap between high-speed cloud inference (via Groq Cloud) and privacy-respecting local models (via Ollama), OllamaCode transforms your terminal into a self-repairing, autonomous engineering environment.
+OllamaCode is a AI Terminal Assistant designed for modern developers who demand speed, autonomy, and local-first intelligence. By bridging the gap between high-speed cloud inference (via Groq Cloud) and privacy-respecting local models (with Ollama), OllamaCode transforms your terminal into a self repairing, autonomous engineering environment.
 
 Whether you are debugging complex legacy systems, generating boilerplate code, or automating repetitive terminal workflows, OllamaCode provides the cognitive layer your shell has been missing.
 
 ---
 
-## Competitive Analysis: OllamaCode vs. The Market
+## Competitive Analysis: OllamaCode vs The Market
 
 In the rapidly evolving landscape of AI-powered developer tools, OllamaCode occupies a unique niche by prioritizing high-speed inference and local autonomy. Below is a detailed comparison with other major players in the field.
 
-### Comparison Table
+### Comparison
 
 | Feature | OllamaCode | Aider | OpenDevin | Copilot CLI |
 | :--- | :--- | :--- | :--- | :--- |
