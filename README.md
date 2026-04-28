@@ -1,4 +1,4 @@
-# OllamaCode 1.2.2
+# OllamaCode 1.2.2.1
 (By TCYZ)
 
 ## Overview
