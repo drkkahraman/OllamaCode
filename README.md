@@ -11,7 +11,7 @@ Whether you are debugging complex legacy systems, generating boilerplate code, o
 
 ## Competitive Analysis: OllamaCode vs The Market
 
-In the rapidly evolving landscape of AI-powered developer tools, OllamaCode occupies a unique niche by prioritizing high-speed inference and local autonomy. Below is a detailed comparison with other major players in the field.
+In the rapidly evolving landscape of AI-powered developer tools, OllamaCode occupies a unique niche by prioritizing high-speed inference and local autonomy. Below is a detailed comparison with other major players in the field
 
 ### Comparison
 
