@@ -1,5 +1,6 @@
-# OllamaCode 1.3
+# OllamaCode 1.3.1
 
+Updated NPM
 
 ## Overview
 
