@@ -115,7 +115,7 @@ async function runAgent(forceSetup = false) {
     }
 }
 
-program.name('ollamacode').description('AI-Powered Autonomous Terminal Agent').version('1.2.2');
+program.name('ollamacode').description('AI-Powered Autonomous Terminal Agent').version('1.3');
 program.command('settings').action(() => runAgent(true));
 program.action(() => runAgent());
 program.parse();
