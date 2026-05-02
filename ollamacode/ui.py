@@ -5,6 +5,8 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.prompt import Prompt, Confirm
 from rich.text import Text
+from rich.align import Align
+from rich.columns import Columns
 
 def setup_wizard(settings, console, list_ollama_fn, list_groq_fn):
     console.clear()
@@ -44,14 +46,78 @@ def setup_wizard(settings, console, list_ollama_fn, list_groq_fn):
     return settings
 
 def show_status(settings, console):
-    p = "[bold magenta]OllamaCode v1.2.2[/bold magenta]"
-    model = f"[yellow]{settings['model']}[/yellow]"
-    provider = f"[dim]via {settings['provider']}[/dim]"
-    flags = (
-        f"[{'green' if settings['auto_run'] else 'dim'}]● Auto-Run[/] "
-        f"[{'green' if settings['auto_fix'] else 'dim'}]● Auto-Fix[/]"
+    console.clear()
+    
+    # Large Logo ASCII Art
+    logo = """
+ [bold white]
+  ▄▀▀▀▀▄  █       █       ▄▀▀▀▀▄  █▀▄▀█  ▄▀▀▀▀▄  ▄▀▀▀▀▄  ▄▀▀▀▀▄  █▀▀▄  █▀▀▀ 
+  █    █  █       █       █▄▄▄▄█  █ █ █  █▄▄▄▄█  █       █    █  █  █  █▀▀▀ 
+  ▀▄▄▄▄▀  ▀▀▀▀▀▀  ▀▀▀▀▀▀  ▀    ▀  ▀   ▀  ▀    ▀  ▀▄▄▄▄▀  ▀▄▄▄▄▀  ▀▀▀   ▀▀▀▀ 
+ [/bold white]
+    """
+    console.print(Align.center(logo))
+
+    # Main Info Panel (Simulating the search bar)
+    info_text = Text()
+    info_text.append("\n  Ask anything... ", style="dim")
+    info_text.append('"Fix a TODO in the codebase"', style="italic dim")
+    info_text.append("\n\n  ")
+    info_text.append("Build", style="bold blue")
+    info_text.append(" · ", style="dim")
+    info_text.append(f"{settings['model']} ", style="bold white")
+    info_text.append(f"[{settings['provider']}] ", style="cyan")
+    info_text.append(f"{settings['provider']} (local)" if settings['provider'] == 'Ollama' else "Cloud API", style="dim")
+    info_text.append("\n")
+
+    # Simulated left border with a Panel
+    panel = Panel(
+        info_text,
+        border_style="bright_blue",
+        box=None, # We'll use a custom padding to simulate the side bar
+        padding=(0, 0, 0, 2)
     )
-    console.print(f"\n{p} [dim]—[/] {model} {provider}\n{flags}\n")
+    
+    # To get the vertical line on the left, we can use a Table with one column and left border
+    info_table = Table(box=None, show_header=False, padding=(0, 1))
+    info_table.add_column(style="bright_blue")
+    
+    # Create the left-bordered effect
+    container = Table.grid(padding=(0, 4))
+    container.add_column()
+    
+    content_table = Table(box=None, show_header=False, padding=(0, 0))
+    content_table.add_column(style="bright_blue") # Border column
+    content_table.add_column() # Content column
+    
+    # Add a "vertical line" using a string of blocks
+    v_line = Text("┃\n┃\n┃\n┃\n┃", style="bold bright_blue")
+    content_table.add_row(v_line, info_text)
+    
+    console.print(Align.center(content_table))
+    
+    # Shortcuts
+    shortcuts = Text.assemble(
+        ("tab ", "bold white"), ("agents  ", "dim"),
+        ("ctrl+p ", "bold white"), ("commands", "dim")
+    )
+    console.print(Align.right(shortcuts, pad=True))
+    console.print("\n")
+
+    # Bottom status bar
+    tip = Text.assemble(
+        (" ● ", "orange1"), ("Tip ", "bold white"), 
+        ("Use ", "dim"), ("$ARGUMENTS, $1, $2 ", "bold white"), ("in custom commands for dynamic input", "dim")
+    )
+    version = Text(f"1.3", style="dim")
+    
+    footer = Table.grid(expand=True)
+    footer.add_column(ratio=1)
+    footer.add_column(justify="right")
+    footer.add_row(tip, version)
+    
+    console.print(footer)
+    console.print("\n")
 
 def show_stats(stats, cwd, console):
     cpu, ram, disk = stats
@@ -69,5 +135,5 @@ def show_stats(stats, cwd, console):
     else:
         stats_line = Text(f"📁 {cwd_short}", style="magenta")
     
-    # Use end="" and flush to keep it on one line for a dynamic feel
     console.print(stats_line)
+

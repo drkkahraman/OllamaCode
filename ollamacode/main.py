@@ -96,7 +96,7 @@ def main():
     if len(sys.argv) > 1:
         if sys.argv[1] == "settings": run_agent(force_setup=True); return
         if sys.argv[1] == "--version" or sys.argv[1] == "-v":
-            console.print("[bold magenta]OllamaCode 1.2.2[/bold magenta]"); return
+            console.print("[bold magenta]OllamaCode 1.3[/bold magenta]"); return
     run_agent()
 
 if __name__ == "__main__":
