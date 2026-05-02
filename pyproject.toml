@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ollamacode"
+version = "1.3"
+description = "OllamaCode: AI-Powered Autonomous Terminal Agent"
+authors = [
+    { name="drkkahraman" }
+]
+dependencies = [
+    "requests",
+    "rich",
+    "psutil"
+]
+requires-python = ">=3.6"
+
+[project.scripts]
+ollamacode = "ollamacode.main:main"
+llam = "ollamacode.main:main"
