@@ -1,4 +1,4 @@
-# OllamaCode 1.3.1
+# OllamaCode 1.3.2
 
 This Project Is Not Supported Anymore.
 
