@@ -1,6 +1,6 @@
 # OllamaCode 1.3.1
 
-Updated NPM
+This Project Is Not Supported Anymore.
 
 ## Overview
 
